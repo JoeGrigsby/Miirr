@@ -194,9 +194,28 @@
   .lcars-footer .f1 { flex: 3; background: #ff9900; }
   .lcars-footer .f2 { flex: 1; }
   .lcars-footer .f3 { flex: 2; background: #5599ff; }
+
+  .mute-btn {
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    background: #1a0d00;
+    border: 1px solid #cc6600;
+    color: #cc6600;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    z-index: 100;
+  }
+  .mute-btn:hover { background: #cc6600; color: #000; }
 </style>
 </head>
 <body>
+
+<button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 SOUND</button>
 
 <div class="lcars-header">
   <div class="pill"></div>
@@ -404,12 +423,9 @@ function disableAll() {
 function showMission(idx) {
   if (idx >= missions.length) { endGame(); return; }
   const m = missions[idx];
-  document.getElementById('stardate').textContent =
-    `STARDATE ${m.stardate} · WARP 6`;
+  document.getElementById('stardate').textContent = `STARDATE ${m.stardate} · WARP 6`;
   document.getElementById('scene-title').textContent = m.title;
-
   m.intro.forEach(l => log(l.text, l.cls));
-
   renderChoices(m.choices, (pick) => {
     const c = m.choices[pick];
     log('> ' + c.label, 'system');
@@ -421,9 +437,7 @@ function showMission(idx) {
       state.crew    = clamp(state.crew    + d.crew);
       state.score  += d.score;
       updateStats();
-
       if (state.hull <= 0) { setTimeout(shipDestroyed, 800); return; }
-
       setTimeout(() => {
         state.mission++;
         if (state.mission < missions.length) {
@@ -449,24 +463,135 @@ function shipDestroyed() {
 function endGame() {
   document.getElementById('scene-title').textContent = 'MISSION COMPLETE';
   log('═'.repeat(40), 'good');
-
   let rank, cls;
   if      (state.score >= 150) { rank = 'ADMIRAL — Legendary command.';       cls = 'good'; }
   else if (state.score >= 100) { rank = 'CAPTAIN — Distinguished service.';   cls = 'good'; }
   else if (state.score >= 50)  { rank = 'COMMANDER — Competent performance.'; cls = 'info'; }
   else                         { rank = 'ENSIGN — Much to learn, Captain.';   cls = 'bad';  }
-
   log('All missions concluded.', 'system');
   log(`Final score: ${state.score}`, 'alert');
   log(`Starfleet rating: ${rank}`, cls);
   log('Live long and prosper.', 'good');
-
   renderChoices([{label:'⟳ Play again'}], () => location.reload());
 }
+
+// ── Sound Engine ──────────────────────────────────────────
+let audioCtx = null;
+let muted = false;
+let bgNodes = [];
+let bgStarted = false;
+
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('mute-btn').textContent = muted ? '🔇 MUTED' : '🔊 SOUND';
+  bgNodes.forEach(n => { if (n.gain) n.gain.value = muted ? 0 : n._vol; });
+}
+
+function startBackground() {
+  if (bgStarted) return;
+  bgStarted = true;
+  const ctx = getCtx();
+  function makeLayer(freq, detune, vol) {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    osc.detune.value = detune;
+    gain.gain.value = muted ? 0 : vol;
+    gain._vol = vol;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    bgNodes.push(gain);
+  }
+  makeLayer(48,  0, 0.06);
+  makeLayer(48, 12, 0.04);
+  const warp = ctx.createOscillator();
+  const warpGain = ctx.createGain();
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+  warp.type = 'sine';
+  warp.frequency.value = 110;
+  warpGain.gain.value = muted ? 0 : 0.025;
+  warpGain._vol = 0.025;
+  lfo.frequency.value = 0.07;
+  lfoGain.gain.value = 8;
+  lfo.connect(lfoGain);
+  lfoGain.connect(warp.frequency);
+  warp.connect(warpGain);
+  warpGain.connect(ctx.destination);
+  lfo.start(); warp.start();
+  bgNodes.push(warpGain);
+  function randomChime() {
+    if (!muted) {
+      const c = getCtx();
+      const f = [523,659,784,1047,1319][Math.floor(Math.random()*5)];
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine';
+      o.frequency.value = f;
+      g.gain.setValueAtTime(0, c.currentTime);
+      g.gain.linearRampToValueAtTime(0.04, c.currentTime + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 1.2);
+      o.connect(g); g.connect(c.destination);
+      o.start(); o.stop(c.currentTime + 1.2);
+    }
+    setTimeout(randomChime, 4000 + Math.random() * 8000);
+  }
+  setTimeout(randomChime, 3000);
+}
+
+function playHover() {
+  if (muted) return;
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(1400, ctx.currentTime);
+  o.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.06);
+  g.gain.setValueAtTime(0.12, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + 0.07);
+}
+
+function playClick() {
+  if (muted) return;
+  const ctx = getCtx();
+  const o1 = ctx.createOscillator();
+  const g1 = ctx.createGain();
+  o1.type = 'square';
+  o1.frequency.value = 660;
+  g1.gain.setValueAtTime(0.15, ctx.currentTime);
+  g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+  o1.connect(g1); g1.connect(ctx.destination);
+  o1.start(); o1.stop(ctx.currentTime + 0.09);
+  const o2 = ctx.createOscillator();
+  const g2 = ctx.createGain();
+  o2.type = 'square';
+  o2.frequency.value = 990;
+  g2.gain.setValueAtTime(0, ctx.currentTime + 0.08);
+  g2.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.10);
+  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
+  o2.connect(g2); g2.connect(ctx.destination);
+  o2.start(ctx.currentTime + 0.08);
+  o2.stop(ctx.currentTime + 0.22);
+}
+
+document.addEventListener('mouseenter', e => {
+  if (e.target.tagName === 'BUTTON' && !e.target.disabled) { startBackground(); playHover(); }
+}, true);
+document.addEventListener('click', e => {
+  if (e.target.tagName === 'BUTTON' && !e.target.disabled) playClick();
+}, true);
 
 updateStats();
 setTimeout(() => showMission(0), 500);
 </script>
 </body>
 </html>
-
