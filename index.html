@@ -1,1 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Starfleet Command — USS Miirr</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: #000;
+    color: #ff9900;
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .lcars-header {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    align-items: stretch;
+    margin-bottom: 6px;
+    height: 60px;
+  }
+  .lcars-header .pill {
+    background: #ff9900;
+    width: 120px;
+    border-radius: 30px 0 0 30px;
+  }
+  .lcars-header .stripe {
+    background: #ff9900;
+    height: 18px;
+    flex: 1;
+    align-self: flex-end;
+  }
+  .lcars-header .block {
+    background: #cc6600;
+    width: 60px;
+    margin-left: 6px;
+    align-self: flex-end;
+    height: 18px;
+  }
+  .lcars-header .block2 {
+    background: #ff9900;
+    width: 40px;
+    margin-left: 6px;
+    align-self: flex-end;
+    height: 18px;
+  }
+  .lcars-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 22px;
+    color: #ff9900;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .lcars-subtitle {
+    font-size: 11px;
+    color: #cc6600;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .main {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .sidebar {
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+  .sidebar-block {
+    background: #ff9900;
+    border-radius: 20px 0 0 20px;
+    padding: 8px 12px;
+    font-size: 10px;
+    color: #000;
+    font-weight: bold;
+    letter-spacing: 1px;
+  }
+  .sidebar-block.blue  { background: #5599ff; }
+  .sidebar-block.red   { background: #ff4444; }
+  .sidebar-block.teal  { background: #44ccbb; }
+  .sidebar-block.spacer { background: #331100; height: 40px; }
+
+  .stat-label { font-size: 9px; color: #cc6600; letter-spacing: 2px; margin-top: 8px; margin-bottom: 2px; }
+  .stat-bar-bg { background: #1a0d00; height: 10px; border-radius: 5px; overflow: hidden; }
+  .stat-bar { height: 100%; border-radius: 5px; transition: width 0.5s; }
+  .stat-bar.shields { background: #5599ff; }
+  .stat-bar.hull    { background: #ff9900; }
+  .stat-bar.crew    { background: #44ccbb; }
+
+  .panel {
+    flex: 1;
+    border: 2px solid #ff9900;
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 480px;
+  }
+
+  .stardate {
+    font-size: 11px;
+    color: #cc6600;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #331100;
+    padding-bottom: 8px;
+  }
+
+  .scene-title {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 14px;
+    color: #ff4444;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    min-height: 20px;
+  }
+
+  .log {
+    flex: 1;
+    background: #0a0500;
+    border: 1px solid #331100;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-y: auto;
+    max-height: 260px;
+  }
+  .log p { margin-bottom: 6px; }
+  .log p.system { color: #cc6600; }
+  .log p.good   { color: #44cc44; }
+  .log p.bad    { color: #ff4444; }
+  .log p.info   { color: #5599ff; }
+  .log p.alert  { color: #ff9900; font-weight: bold; }
+
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .choices-label {
+    font-size: 10px;
+    color: #cc6600;
+    letter-spacing: 3px;
+    margin-bottom: 2px;
+  }
+
+  button {
+    background: #1a0d00;
+    border: 1px solid #ff9900;
+    color: #ff9900;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 1px;
+  }
+  button:hover  { background: #ff9900; color: #000; }
+  button.blue   { border-color: #5599ff; color: #5599ff; }
+  button.blue:hover { background: #5599ff; color: #000; }
+  button.red    { border-color: #ff4444; color: #ff4444; }
+  button.red:hover  { background: #ff4444; color: #000; }
+  button:disabled   { opacity: 0.3; cursor: default; }
+
+  .lcars-footer {
+    width: 100%;
+    max-width: 800px;
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .lcars-footer div { background: #cc6600; height: 12px; border-radius: 6px; }
+  .lcars-footer .f1 { flex: 3; background: #ff9900; }
+  .lcars-footer .f2 { flex: 1; }
+  .lcars-footer .f3 { flex: 2; background: #5599ff; }
+</style>
+</head>
+<body>
+
+<div class="lcars-header">
+  <div class="pill"></div>
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding-left:10px;">
+    <div class="lcars-title">STARFLEET COMMAND</div>
+    <div class="stripe"></div>
+  </div>
+  <div class="block"></div>
+  <div class="block2"></div>
+</div>
+
+<div class="lcars-subtitle">USS MIIRR · NCC-1701-M · BRIDGE INTERFACE</div>
+
+<div class="main">
+  <div class="sidebar">
+    <div class="sidebar-block">NAVIGATION</div>
+    <div class="sidebar-block blue">TACTICAL</div>
+    <div class="sidebar-block red">ALERT</div>
+    <div class="sidebar-block teal">COMMS</div>
+    <div class="sidebar-block spacer"></div>
+
+    <div style="padding: 0 8px;">
+      <div class="stat-label">SHIELDS</div>
+      <div class="stat-bar-bg"><div class="stat-bar shields" id="bar-shields" style="width:100%"></div></div>
+
+      <div class="stat-label">HULL</div>
+      <div class="stat-bar-bg"><div class="stat-bar hull" id="bar-hull" style="width:100%"></div></div>
+
+      <div class="stat-label">CREW</div>
+      <div class="stat-bar-bg"><div class="stat-bar crew" id="bar-crew" style="width:100%"></div></div>
+
+      <div class="stat-label" style="margin-top:16px;">SCORE</div>
+      <div style="font-size:20px; color:#ff9900;" id="score">0</div>
+
+      <div class="stat-label" style="margin-top:12px;">MISSION</div>
+      <div style="font-size:11px; color:#5599ff;" id="mission-count">1 / 4</div>
+    </div>
+  </div>
+
+  <div class="panel">
+    <div class="stardate" id="stardate">STARDATE 47634.4 · SECTOR 001 · WARP 6</div>
+    <div class="scene-title" id="scene-title">AWAITING ORDERS</div>
+
+    <div class="log" id="log">
+      <p class="system">Bridge systems online.</p>
+      <p class="system">All stations report ready.</p>
+      <p>Welcome aboard, Captain. The USS Miirr awaits your command.</p>
+      <p>You will face 4 missions. Each decision affects your ship and score.</p>
+    </div>
+
+    <div class="choices" id="choices">
+      <div class="choices-label">CAPTAIN'S OPTIONS</div>
+    </div>
+  </div>
+</div>
+
+<div class="lcars-footer">
+  <div class="f1"></div><div class="f2"></div><div class="f3"></div>
+</div>
+
+<script>
+const state = {
+  shields: 100,
+  hull: 100,
+  crew: 100,
+  score: 0,
+  mission: 0,
+};
+
+const missions = [
+  {
+    stardate: "47634.4 · SECTOR 001",
+    title: "RED ALERT — KLINGON WARBIRD DECLOAKING",
+    intro: [
+      {cls:"alert", text:"⚠ RED ALERT — Battle stations!"},
+      {cls:"", text:"A Klingon K't'inga-class warbird has decloaked off the starboard bow. Shields at 30%. Hull breach reported on deck 7."},
+      {cls:"info", text:"The warbird's weapons are charging. You have seconds to decide."},
+    ],
+    choices: [
+      { label: "🚀 Fire photon torpedoes", style:"red",
+        outcome: {cls:"good", text:"Direct hit! The warbird's shields collapse. They retreat into the Neutral Zone. Well done, Captain."},
+        delta: {shields:+10, hull:0, crew:0, score:+30} },
+      { label: "📡 Open hailing frequencies",
+        outcome: {cls:"good", text:"Surprisingly, they respond. Their commander respects your courage. A temporary ceasefire is agreed."},
+        delta: {shields:0, hull:0, crew:+10, score:+20} },
+      { label: "🛡 Reinforce shields and hold position",
+        outcome: {cls:"system", text:"They fire. Shields absorb the hit. Standoff continues — but they eventually withdraw, unwilling to risk war."},
+        delta: {shields:-20, hull:-5, crew:0, score:+10} },
+      { label: "⚡ Retreat at maximum warp", style:"blue",
+        outcome: {cls:"bad", text:"The crew is shaken. Retreating from a single warbird damages morale and Starfleet's reputation."},
+        delta: {shields:0, hull:0, crew:-15, score:-10} },
+    ]
+  },
+  {
+    stardate: "47641.2 · BADLANDS SECTOR",
+    title: "SPATIAL ANOMALY DETECTED",
+    intro: [
+      {cls:"info", text:"Sensors are detecting a massive spatial rift forming off the port bow."},
+      {cls:"", text:"It appears stable — but its origin is unknown. Could be natural, could be artificial."},
+      {cls:"system", text:"Science officer recommends caution. Tactical officer recommends immediate withdrawal."},
+    ],
+    choices: [
+      { label: "🔬 Full sensor sweep",
+        outcome: {cls:"good", text:"Scans reveal a stable wormhole to the Gamma Quadrant — a major discovery. Starfleet is very pleased. Coordinates logged."},
+        delta: {shields:0, hull:0, crew:+5, score:+35} },
+      { label: "🌀 Enter the rift",
+        outcome: {cls:"bad", text:"Temporal displacement! The ship emerges in 1986. It takes three weeks to get back. The crew is exhausted but fine."},
+        delta: {shields:-10, hull:-10, crew:-10, score:+5} },
+      { label: "💥 Fire a probe into it",
+        outcome: {cls:"good", text:"The probe returns data on the rift's structure. Safe intel without risking the ship. Solid call, Captain."},
+        delta: {shields:0, hull:0, crew:0, score:+25} },
+      { label: "🚀 Retreat immediately", style:"blue",
+        outcome: {cls:"system", text:"You leave. The rift closes an hour later. A Romulan vessel claims the coordinates. Opportunity missed."},
+        delta: {shields:0, hull:0, crew:0, score:-5} },
+    ]
+  },
+  {
+    stardate: "47655.8 · NEUTRAL ZONE",
+    title: "FIRST CONTACT — UNKNOWN VESSEL",
+    intro: [
+      {cls:"info", text:"An unregistered vessel has dropped out of warp 40,000 km ahead."},
+      {cls:"", text:"They are hailing on all frequencies. Universal translator is struggling — this species is completely unknown."},
+      {cls:"system", text:"They appear unarmed. But appearances can be deceiving."},
+    ],
+    choices: [
+      { label: "🖖 Respond warmly — open hailing",
+        outcome: {cls:"good", text:"They are explorers from beyond the galactic barrier. A cultural exchange begins. Historic first contact achieved."},
+        delta: {shields:0, hull:0, crew:+10, score:+40} },
+      { label: "🔍 Scan their vessel first",
+        outcome: {cls:"good", text:"Scans detect concealed weapons — but also life signs in distress. You offer medical aid. They lower their weapons."},
+        delta: {shields:0, hull:0, crew:+5, score:+30} },
+      { label: "🛡 Raise shields and demand identification", style:"red",
+        outcome: {cls:"bad", text:"They interpret this as a declaration of war. A firefight ensues before a ceasefire is negotiated. Damaged relations."},
+        delta: {shields:-25, hull:-15, crew:-10, score:-15} },
+      { label: "📻 Ignore and continue on course",
+        outcome: {cls:"bad", text:"They follow you all the way to Starbase 12. Starfleet is furious at the missed opportunity."},
+        delta: {shields:0, hull:0, crew:-5, score:-10} },
+    ]
+  },
+  {
+    stardate: "47672.1 · DEEP SPACE",
+    title: "FINAL MISSION — DISTRESS SIGNAL",
+    intro: [
+      {cls:"alert", text:"⚠ Priority One distress signal received."},
+      {cls:"", text:"A Federation colony on Veridian III is under attack by Orion pirates. Three ships, heavily armed."},
+      {cls:"info", text:"We are the only vessel in range. 500 colonists are in danger."},
+    ],
+    choices: [
+      { label: "⚔ Engage all three ships", style:"red",
+        outcome: {cls:"good", text:"A fierce battle — but your crew's training shows. Two ships destroyed, one flees. Colony saved. Casualties: 12."},
+        delta: {shields:-40, hull:-30, crew:-12, score:+50} },
+      { label: "📡 Negotiate — offer them safe passage",
+        outcome: {cls:"good", text:"Bluffing works. You imply a fleet is en route. The pirates cut their losses and warp out. Zero casualties."},
+        delta: {shields:0, hull:0, crew:0, score:+45} },
+      { label: "🌩 Use the nebula for cover — ambush",
+        outcome: {cls:"good", text:"Brilliant tactics. Using the nebula's interference you disable all three ships before they know what hit them."},
+        delta: {shields:-10, hull:-5, crew:-2, score:+55} },
+      { label: "📻 Call for backup and stall", style:"blue",
+        outcome: {cls:"system", text:"Backup arrives in time, but 40 colonists were taken. Shared victory — but the delay cost lives."},
+        delta: {shields:0, hull:0, crew:0, score:+15} },
+    ]
+  },
+];
+
+function clamp(v) { return Math.max(0, Math.min(100, v)); }
+
+function setBar(id, val) {
+  document.getElementById(id).style.width = clamp(val) + '%';
+}
+
+function log(text, cls='') {
+  const div = document.getElementById('log');
+  const p = document.createElement('p');
+  if (cls) p.className = cls;
+  p.textContent = text;
+  div.appendChild(p);
+  div.scrollTop = div.scrollHeight;
+}
+
+function updateStats() {
+  setBar('bar-shields', state.shields);
+  setBar('bar-hull',    state.hull);
+  setBar('bar-crew',    state.crew);
+  document.getElementById('score').textContent = state.score;
+  document.getElementById('mission-count').textContent =
+    state.mission < missions.length ? `${state.mission + 1} / ${missions.length}` : 'COMPLETE';
+}
+
+function renderChoices(choices, onPick) {
+  const box = document.getElementById('choices');
+  box.innerHTML = '<div class="choices-label">CAPTAIN\'S OPTIONS</div>';
+  choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.textContent = c.label;
+    if (c.style) btn.classList.add(c.style);
+    btn.onclick = () => { disableAll(); onPick(i); };
+    box.appendChild(btn);
+  });
+}
+
+function disableAll() {
+  document.querySelectorAll('#choices button').forEach(b => b.disabled = true);
+}
+
+function showMission(idx) {
+  if (idx >= missions.length) { endGame(); return; }
+  const m = missions[idx];
+  document.getElementById('stardate').textContent =
+    `STARDATE ${m.stardate} · WARP 6`;
+  document.getElementById('scene-title').textContent = m.title;
+
+  m.intro.forEach(l => log(l.text, l.cls));
+
+  renderChoices(m.choices, (pick) => {
+    const c = m.choices[pick];
+    log('> ' + c.label, 'system');
+    setTimeout(() => {
+      log(c.outcome.text, c.outcome.cls);
+      const d = c.delta;
+      state.shields = clamp(state.shields + d.shields);
+      state.hull    = clamp(state.hull    + d.hull);
+      state.crew    = clamp(state.crew    + d.crew);
+      state.score  += d.score;
+      updateStats();
+
+      if (state.hull <= 0) { setTimeout(shipDestroyed, 800); return; }
+
+      setTimeout(() => {
+        state.mission++;
+        if (state.mission < missions.length) {
+          log('─'.repeat(40), 'system');
+          log('New mission incoming...', 'info');
+          setTimeout(() => showMission(state.mission), 1000);
+        } else {
+          setTimeout(endGame, 800);
+        }
+      }, 1800);
+    }, 600);
+  });
+}
+
+function shipDestroyed() {
+  document.getElementById('scene-title').textContent = 'SHIP DESTROYED';
+  log('═'.repeat(40), 'bad');
+  log('HULL INTEGRITY LOST. USS MIIRR DESTROYED.', 'bad');
+  log(`Final score: ${state.score}`, 'system');
+  renderChoices([{label:'⟳ Try again'}], () => location.reload());
+}
+
+function endGame() {
+  document.getElementById('scene-title').textContent = 'MISSION COMPLETE';
+  log('═'.repeat(40), 'good');
+
+  let rank, cls;
+  if      (state.score >= 150) { rank = 'ADMIRAL — Legendary command.';       cls = 'good'; }
+  else if (state.score >= 100) { rank = 'CAPTAIN — Distinguished service.';   cls = 'good'; }
+  else if (state.score >= 50)  { rank = 'COMMANDER — Competent performance.'; cls = 'info'; }
+  else                         { rank = 'ENSIGN — Much to learn, Captain.';   cls = 'bad';  }
+
+  log('All missions concluded.', 'system');
+  log(`Final score: ${state.score}`, 'alert');
+  log(`Starfleet rating: ${rank}`, cls);
+  log('Live long and prosper.', 'good');
+
+  renderChoices([{label:'⟳ Play again'}], () => location.reload());
+}
+
+updateStats();
+setTimeout(() => showMission(0), 500);
+</script>
+</body>
+</html>
 
