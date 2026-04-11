@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Starfleet Command — USS Miirr</title>
+<title>Star Trek: The Man in the Mirror — ISS Miirr</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
 
@@ -28,20 +28,70 @@
     margin-bottom: 6px;
     height: 60px;
   }
-  .lcars-header .pill { background: #ff9900; width: 120px; border-radius: 30px 0 0 30px; }
-  .lcars-header .stripe { background: #ff9900; height: 18px; flex: 1; align-self: flex-end; }
-  .lcars-header .block { background: #cc6600; width: 60px; margin-left: 6px; align-self: flex-end; height: 18px; }
-  .lcars-header .block2 { background: #ff9900; width: 40px; margin-left: 6px; align-self: flex-end; height: 18px; }
+  .lcars-header .pill {
+    background: #ff9900;
+    width: 120px;
+    border-radius: 30px 0 0 30px;
+  }
+  .lcars-header .stripe {
+    background: #ff9900;
+    height: 18px;
+    flex: 1;
+    align-self: flex-end;
+  }
+  .lcars-header .block {
+    background: #cc6600;
+    width: 60px;
+    margin-left: 6px;
+    align-self: flex-end;
+    height: 18px;
+  }
+  .lcars-header .block2 {
+    background: #ff9900;
+    width: 40px;
+    margin-left: 6px;
+    align-self: flex-end;
+    height: 18px;
+  }
+  .lcars-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 22px;
+    color: #ff9900;
+    letter-spacing: 4px;
+    text-align: center;
+    margin-bottom: 4px;
+  }
+  .lcars-subtitle {
+    font-size: 11px;
+    color: #cc6600;
+    letter-spacing: 3px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
 
-  .lcars-title { font-family: 'Oswald', sans-serif; font-size: 22px; color: #ff9900; letter-spacing: 4px; text-align: center; margin-bottom: 4px; }
-  .lcars-subtitle { font-size: 11px; color: #cc6600; letter-spacing: 3px; text-align: center; margin-bottom: 16px; }
+  .main {
+    width: 100%;
+    max-width: 980px;
+    display: flex;
+    gap: 12px;
+  }
 
-  .main { width: 100%; max-width: 980px; display: flex; gap: 12px; }
-
-  .sidebar { width: 140px; flex-shrink: 0; display: flex; flex-direction: column; gap: 6px; }
+  .sidebar {
+    width: 140px;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
   .sidebar-block {
-    background: #ff9900; border-radius: 20px 0 0 20px; padding: 8px 12px;
-    font-family: 'Rajdhani', sans-serif; font-size: 12px; color: #000; font-weight: bold; letter-spacing: 1px;
+    background: #ff9900;
+    border-radius: 20px 0 0 20px;
+    padding: 8px 12px;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    color: #000;
+    font-weight: bold;
+    letter-spacing: 1px;
   }
   .sidebar-block.blue  { background: #5599ff; }
   .sidebar-block.red   { background: #ff4444; }
@@ -56,27 +106,72 @@
   .stat-bar.crew    { background: #44ccbb; }
 
   .panel {
-    flex: 1; border: 2px solid #ff9900; border-left: none; border-right: none;
-    border-radius: 0; padding: 20px; display: flex; flex-direction: column; gap: 16px; min-height: 480px;
+    flex: 1;
+    border: 2px solid #ff9900;
+    border-left: none;
+    border-right: none;
+    border-radius: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    min-height: 480px;
   }
 
-  /* Space map */
+  /* ── Space map ── */
   .map-panel {
-    width: 170px; flex-shrink: 0; border: 2px solid #ff9900; border-left: none;
-    border-radius: 0 12px 12px 0; display: flex; flex-direction: column; overflow: hidden;
+    width: 170px;
+    flex-shrink: 0;
+    border: 2px solid #ff9900;
+    border-left: none;
+    border-radius: 0 12px 12px 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   }
   .map-label {
-    font-family: 'Rajdhani', sans-serif; font-size: 11px; color: #000;
-    background: #ff9900; text-align: center; padding: 4px; letter-spacing: 2px; font-weight: bold;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 11px;
+    color: #000;
+    background: #ff9900;
+    text-align: center;
+    padding: 4px;
+    letter-spacing: 2px;
+    font-weight: bold;
   }
-  #map-canvas { flex: 1; display: block; background: #000; }
+  #map-canvas {
+    flex: 1;
+    display: block;
+    background: #000;
+  }
 
-  .stardate { font-size: 11px; color: #cc6600; letter-spacing: 2px; border-bottom: 1px solid #331100; padding-bottom: 8px; }
-  .scene-title { font-family: 'Oswald', sans-serif; font-size: 14px; color: #ff4444; letter-spacing: 2px; text-transform: uppercase; min-height: 20px; }
+  .stardate {
+    font-size: 11px;
+    color: #cc6600;
+    letter-spacing: 2px;
+    border-bottom: 1px solid #331100;
+    padding-bottom: 8px;
+  }
+
+  .scene-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 14px;
+    color: #ff4444;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    min-height: 20px;
+  }
 
   .log {
-    flex: 1; background: #0a0500; border: 1px solid #331100; border-radius: 6px;
-    padding: 14px; font-size: 13px; line-height: 1.8; overflow-y: auto; max-height: 260px;
+    flex: 1;
+    background: #0a0500;
+    border: 1px solid #331100;
+    border-radius: 6px;
+    padding: 14px;
+    font-size: 13px;
+    line-height: 1.8;
+    overflow-y: auto;
+    max-height: 260px;
   }
   .log p { margin-bottom: 6px; }
   .log p.system { color: #cc6600; }
@@ -85,13 +180,31 @@
   .log p.info   { color: #5599ff; }
   .log p.alert  { color: #ff9900; font-weight: bold; }
 
-  .choices { display: flex; flex-direction: column; gap: 8px; }
-  .choices-label { font-family: 'Rajdhani', sans-serif; font-size: 12px; color: #cc6600; letter-spacing: 3px; margin-bottom: 2px; }
+  .choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .choices-label {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 12px;
+    color: #cc6600;
+    letter-spacing: 3px;
+    margin-bottom: 2px;
+  }
 
   button {
-    background: #1a0d00; border: 1px solid #ff9900; color: #ff9900;
-    font-family: 'Share Tech Mono', monospace; font-size: 13px; padding: 10px 16px;
-    border-radius: 4px; cursor: pointer; text-align: left; transition: background 0.15s, color 0.15s; letter-spacing: 1px;
+    background: #1a0d00;
+    border: 1px solid #ff9900;
+    color: #ff9900;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    padding: 10px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.15s, color 0.15s;
+    letter-spacing: 1px;
   }
   button:hover  { background: #ff9900; color: #000; }
   button.blue   { border-color: #5599ff; color: #5599ff; }
@@ -100,57 +213,141 @@
   button.red:hover  { background: #ff4444; color: #000; }
   button:disabled   { opacity: 0.3; cursor: default; }
 
-  .lcars-footer { width: 100%; max-width: 980px; display: flex; gap: 6px; margin-top: 6px; }
+  .lcars-footer {
+    width: 100%;
+    max-width: 980px;
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
   .lcars-footer div { background: #cc6600; height: 12px; border-radius: 6px; }
   .lcars-footer .f1 { flex: 3; background: #ff9900; }
   .lcars-footer .f2 { flex: 1; }
   .lcars-footer .f3 { flex: 2; background: #5599ff; }
 
   .mute-btn {
-    position: fixed; top: 14px; right: 18px; background: #1a0d00;
-    border: 1px solid #cc6600; color: #cc6600; font-family: 'Share Tech Mono', monospace;
-    font-size: 11px; padding: 5px 10px; border-radius: 4px; cursor: pointer; letter-spacing: 1px; z-index: 100;
+    position: fixed;
+    top: 14px;
+    right: 18px;
+    background: #1a0d00;
+    border: 1px solid #cc6600;
+    color: #cc6600;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 11px;
+    padding: 5px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    z-index: 100;
   }
   .mute-btn:hover { background: #cc6600; color: #000; }
 
-  /* Splash */
+  /* ── Splash screen ── */
   #splash {
-    position: fixed; inset: 0; background: #000;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    z-index: 999; transition: opacity 1.2s ease;
+    position: fixed;
+    inset: 0;
+    background: #000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+    transition: opacity 1.2s ease;
   }
   #splash.fade-out { opacity: 0; pointer-events: none; }
+
   .splash-star-trek {
-    font-family: 'Oswald', sans-serif; font-size: clamp(32px, 8vw, 80px); font-weight: 700;
-    color: #ff9900; letter-spacing: 12px; text-transform: uppercase;
-    text-shadow: 0 0 40px #ff6600, 0 0 80px #ff3300; animation: pulse-glow 2s ease-in-out infinite;
+    font-family: 'Oswald', sans-serif;
+    font-size: clamp(32px, 8vw, 80px);
+    font-weight: 700;
+    color: #ff9900;
+    letter-spacing: 12px;
+    text-transform: uppercase;
+    text-shadow: 0 0 40px #ff6600, 0 0 80px #ff3300;
+    animation: pulse-glow 2s ease-in-out infinite;
   }
-  .splash-subtitle { font-family: 'Rajdhani', sans-serif; font-size: clamp(12px, 2.5vw, 22px); color: #cc6600; letter-spacing: 6px; margin-top: 14px; text-transform: uppercase; }
-  .splash-ship { margin: 40px 0 30px; opacity: 0.7; }
-  .splash-prompt { font-family: 'Share Tech Mono', monospace; font-size: 13px; color: #5599ff; letter-spacing: 3px; animation: blink 1.2s step-end infinite; margin-top: 10px; }
-  .splash-lcars-bar { position: absolute; bottom: 0; left: 0; right: 0; height: 8px; background: linear-gradient(to right, #ff9900 60%, #cc6600 80%, #5599ff 100%); }
-  .splash-lcars-top { position: absolute; top: 0; left: 0; right: 0; height: 8px; background: linear-gradient(to right, #5599ff 0%, #cc6600 20%, #ff9900 40%); }
+  .splash-subtitle {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(12px, 2.5vw, 22px);
+    color: #cc6600;
+    letter-spacing: 6px;
+    margin-top: 14px;
+    text-transform: uppercase;
+  }
+  .splash-ship {
+    margin: 40px 0 30px;
+    opacity: 0.7;
+  }
+  .splash-prompt {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 13px;
+    color: #5599ff;
+    letter-spacing: 3px;
+    animation: blink 1.2s step-end infinite;
+    margin-top: 10px;
+  }
+  .splash-lcars-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(to right, #ff9900 60%, #cc6600 80%, #5599ff 100%);
+  }
+  .splash-lcars-top {
+    position: absolute;
+    top: 0;
+    left: 0; right: 0;
+    height: 8px;
+    background: linear-gradient(to right, #5599ff 0%, #cc6600 20%, #ff9900 40%);
+  }
   @keyframes pulse-glow {
     0%, 100% { text-shadow: 0 0 40px #ff6600, 0 0 80px #ff3300; }
     50%       { text-shadow: 0 0 60px #ffaa00, 0 0 120px #ff6600; }
   }
-  @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0; }
+  }
+  .splash-mirror-title {
+    font-family: 'Rajdhani', sans-serif;
+    font-size: clamp(16px, 3.5vw, 34px);
+    font-weight: 700;
+    color: #ff4444;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    text-shadow: 0 0 20px #cc0000, 0 0 40px #880000;
+    margin-top: 6px;
+  }
+  .splash-version {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    color: #cc6600;
+    letter-spacing: 3px;
+    margin-top: 8px;
+  }
 </style>
 </head>
 <body>
 
+<!-- Splash screen -->
 <div id="splash">
   <div class="splash-lcars-top"></div>
   <div class="splash-star-trek">Star Trek</div>
-  <div class="splash-subtitle">Starfleet Command · USS Miirr · NCC-1701-M</div>
+  <div class="splash-mirror-title">The Man in the Mirror</div>
+  <div class="splash-version">VERSION 4.0</div>
+  <div class="splash-subtitle">Imperial Command · ISS Miirr · Terran Empire</div>
   <svg class="splash-ship" width="120" height="80" viewBox="0 0 120 80">
+    <!-- saucer -->
     <ellipse cx="60" cy="32" rx="36" ry="14" fill="none" stroke="#5599ff" stroke-width="1.5" opacity="0.8"/>
     <ellipse cx="60" cy="32" rx="18" ry="7" fill="#0a0a1a" stroke="#ff9900" stroke-width="1"/>
+    <!-- hull -->
     <line x1="60" y1="46" x2="60" y2="70" stroke="#5599ff" stroke-width="3"/>
+    <!-- nacelles -->
     <line x1="42" y1="52" x2="30" y2="65" stroke="#5599ff" stroke-width="1.5"/>
     <line x1="78" y1="52" x2="90" y2="65" stroke="#5599ff" stroke-width="1.5"/>
     <ellipse cx="26" cy="66" rx="8" ry="3" fill="none" stroke="#ff9900" stroke-width="1.5"/>
     <ellipse cx="94" cy="66" rx="8" ry="3" fill="none" stroke="#ff9900" stroke-width="1.5"/>
+    <!-- nacelle glow -->
     <ellipse cx="26" cy="66" rx="4" ry="1.5" fill="#5599ff" opacity="0.6"/>
     <ellipse cx="94" cy="66" rx="4" ry="1.5" fill="#5599ff" opacity="0.6"/>
   </svg>
@@ -163,14 +360,14 @@
 <div class="lcars-header">
   <div class="pill"></div>
   <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding-left:10px;">
-    <div class="lcars-title">STARFLEET COMMAND</div>
+    <div class="lcars-title">IMPERIAL COMMAND</div>
     <div class="stripe"></div>
   </div>
   <div class="block"></div>
   <div class="block2"></div>
 </div>
 
-<div class="lcars-subtitle">USS MIIRR · NCC-1701-M · BRIDGE INTERFACE</div>
+<div class="lcars-subtitle">ISS MIIRR · ISS-1701-M · TERRAN EMPIRE · BRIDGE INTERFACE</div>
 
 <div class="main">
   <div class="sidebar">
@@ -179,34 +376,42 @@
     <div class="sidebar-block red">ALERT</div>
     <div class="sidebar-block teal">COMMS</div>
     <div class="sidebar-block spacer"></div>
+
     <div style="padding: 0 8px;">
       <div class="stat-label">SHIELDS</div>
       <div class="stat-bar-bg"><div class="stat-bar shields" id="bar-shields" style="width:100%"></div></div>
+
       <div class="stat-label">HULL</div>
       <div class="stat-bar-bg"><div class="stat-bar hull" id="bar-hull" style="width:100%"></div></div>
+
       <div class="stat-label">CREW</div>
       <div class="stat-bar-bg"><div class="stat-bar crew" id="bar-crew" style="width:100%"></div></div>
+
       <div class="stat-label" style="margin-top:16px;">SCORE</div>
       <div style="font-size:20px; color:#ff9900;" id="score">0</div>
+
       <div class="stat-label" style="margin-top:12px;">MISSION</div>
       <div style="font-size:11px; color:#5599ff;" id="mission-count">1 / 4</div>
     </div>
   </div>
 
   <div class="panel">
-    <div class="stardate" id="stardate">STARDATE 47634.4 · SECTOR 001 · WARP 6</div>
+    <div class="stardate" id="stardate">STARDATE 47634.4 · SECTOR 001 · WARP 6 · TERRAN EMPIRE</div>
     <div class="scene-title" id="scene-title">AWAITING ORDERS</div>
+
     <div class="log" id="log">
-      <p class="system">Bridge systems online.</p>
-      <p class="system">All stations report ready.</p>
-      <p>Welcome aboard, Captain. The USS Miirr awaits your command.</p>
-      <p>You will face 4 missions. Each decision affects your ship and score.</p>
+      <p class="system">Imperial bridge systems online.</p>
+      <p class="system">All stations report ready. Agonizers charged.</p>
+      <p>Welcome, Captain. The ISS Miirr is yours to command — for now.</p>
+      <p>You will face 4 situations. Survive them. Advance through them. Trust no one.</p>
     </div>
+
     <div class="choices" id="choices">
       <div class="choices-label">CAPTAIN'S OPTIONS</div>
     </div>
   </div>
 
+  <!-- Space map -->
   <div class="map-panel">
     <div class="map-label">TACTICAL MAP</div>
     <canvas id="map-canvas" width="170" height="460"></canvas>
@@ -218,99 +423,105 @@
 </div>
 
 <script>
-const state = { shields: 100, hull: 100, crew: 100, score: 0, mission: 0 };
+const state = {
+  shields: 100,
+  hull: 100,
+  crew: 100,
+  score: 0,
+  mission: 0,
+};
 
 const missions = [
   {
     stardate: "47634.4 · SECTOR 001",
-    title: "RED ALERT — KLINGON WARBIRD DECLOAKING",
+    title: "MUTINY — FIRST OFFICER SEIZES ENGINEERING",
     intro: [
-      {cls:"alert", text:"⚠ RED ALERT — Battle stations!"},
-      {cls:"", text:"A Klingon K't'inga-class warbird has decloaked off the starboard bow. Shields at 30%. Hull breach reported on deck 7."},
-      {cls:"info", text:"The warbird's weapons are charging. You have seconds to decide."},
+      {cls:"alert", text:"⚠ INTERNAL SECURITY ALERT — Deck 12 sealed."},
+      {cls:"", text:"First Officer T'Lan has barricaded Engineering with a dozen loyal crew. They're broadcasting on the ship-wide channel: your command is over."},
+      {cls:"info", text:"In the Terran Empire, this was inevitable. How you respond will define the rest of your captaincy."},
     ],
     choices: [
-      { label:"🚀 Fire photon torpedoes", style:"red",
-        outcome:{cls:"good", text:"Direct hit! The warbird's shields collapse. They retreat into the Neutral Zone. Well done, Captain."},
-        delta:{shields:+10, hull:0, crew:0, score:+30} },
-      { label:"📡 Open hailing frequencies",
-        outcome:{cls:"good", text:"Surprisingly, they respond. Their commander respects your courage. A temporary ceasefire is agreed."},
-        delta:{shields:0, hull:0, crew:+10, score:+20} },
-      { label:"🛡 Reinforce shields and hold position",
-        outcome:{cls:"system", text:"They fire. Shields absorb the hit. Standoff continues — but they eventually withdraw, unwilling to risk war."},
-        delta:{shields:-20, hull:-5, crew:0, score:+10} },
-      { label:"⚡ Retreat at maximum warp", style:"blue",
-        outcome:{cls:"bad", text:"The crew is shaken. Retreating from a single warbird damages morale and Starfleet's reputation."},
-        delta:{shields:0, hull:0, crew:-15, score:-10} },
+      { label: "⚔ Storm Engineering — execute all mutineers", style:"red",
+        outcome: {cls:"good", text:"Your security team floods Engineering. T'Lan and the conspirators are dragged to the agonizer booth, then spaced. Brutal. Effective. The crew's loyalty is absolute — for now."},
+        delta: {shields:0, hull:0, crew:-12, score:+30} },
+      { label: "📡 Offer T'Lan a public pardon and promotion",
+        outcome: {cls:"good", text:"You broadcast a deal: swear loyalty on-screen and become Chief of Security. T'Lan accepts. They owe you everything — and they know it."},
+        delta: {shields:0, hull:0, crew:+10, score:+20} },
+      { label: "🗡 Challenge T'Lan to personal combat", style:"red",
+        outcome: {cls:"good", text:"You stride into Engineering alone. The fight is short. You leave T'Lan's body as a message for the rest of the crew. No one questions your command after that."},
+        delta: {shields:0, hull:0, crew:+5, score:+35} },
+      { label: "🛡 Seal Engineering and wait them out", style:"blue",
+        outcome: {cls:"bad", text:"Three days pass. The crew watches the standoff in silence. T'Lan eventually surrenders — but the hesitation you showed is a wound. Others are already taking notes."},
+        delta: {shields:0, hull:0, crew:-10, score:-5} },
     ]
   },
   {
-    stardate: "47641.2 · BADLANDS SECTOR",
-    title: "SPATIAL ANOMALY DETECTED",
+    stardate: "47641.2 · CARDASSIAN BORDER",
+    title: "OPPORTUNITY — ALLIANCE FREIGHTER ADRIFT",
     intro: [
-      {cls:"info", text:"Sensors are detecting a massive spatial rift forming off the port bow."},
-      {cls:"", text:"It appears stable — but its origin is unknown. Could be natural, could be artificial."},
-      {cls:"system", text:"Science officer recommends caution. Tactical officer recommends immediate withdrawal."},
+      {cls:"info", text:"Sensors detect an Alliance freighter hauling dilithium crystals — warp drive crippled, drifting. No escort."},
+      {cls:"", text:"The Intendant's standing orders say to respect Alliance shipping lanes. But 500 kilograms of dilithium is 500 kilograms."},
+      {cls:"system", text:"Your helmsman is already angling toward intercept. Awaiting your order, Captain."},
     ],
     choices: [
-      { label:"🔬 Full sensor sweep",
-        outcome:{cls:"good", text:"Scans reveal a stable wormhole to the Gamma Quadrant — a major discovery. Starfleet is very pleased. Coordinates logged."},
-        delta:{shields:0, hull:0, crew:+5, score:+35} },
-      { label:"🌀 Enter the rift",
-        outcome:{cls:"bad", text:"Temporal displacement! The ship emerges in 1986. It takes three weeks to get back. The crew is exhausted but fine."},
-        delta:{shields:-10, hull:-10, crew:-10, score:+5} },
-      { label:"💥 Fire a probe into it",
-        outcome:{cls:"good", text:"The probe returns data on the rift's structure. Safe intel without risking the ship. Solid call, Captain."},
-        delta:{shields:0, hull:0, crew:0, score:+25} },
-      { label:"🚀 Retreat immediately", style:"blue",
-        outcome:{cls:"system", text:"You leave. The rift closes an hour later. A Romulan vessel claims the coordinates. Opportunity missed."},
-        delta:{shields:0, hull:0, crew:0, score:-5} },
+      { label: "🚀 Attack and seize the full cargo", style:"red",
+        outcome: {cls:"good", text:"The freighter surrenders without a fight. The dilithium is loaded in under an hour. The Alliance will lodge a protest — you'll deal with that later. The crew is pleased."},
+        delta: {shields:-5, hull:-5, crew:+5, score:+40} },
+      { label: "💰 Hail them — demand half as tribute",
+        outcome: {cls:"good", text:"The Ferengi captain agrees instantly. Half the dilithium transferred with no shots fired and no official incident. Smart, profitable, and deniable."},
+        delta: {shields:0, hull:0, crew:0, score:+30} },
+      { label: "📻 Report their position to the Intendant", style:"blue",
+        outcome: {cls:"system", text:"Political chess. The Intendant raids the freighter and owes you a favor. No personal risk, modest indirect reward — and a dangerous ally now in your debt."},
+        delta: {shields:0, hull:0, crew:0, score:+20} },
+      { label: "🤝 Let them pass — follow standing orders",
+        outcome: {cls:"bad", text:"You follow orders. The Intendant is satisfied. Your crew is not. Passing up easy wealth in the Terran Empire is seen as weakness, not discipline."},
+        delta: {shields:0, hull:0, crew:-10, score:+5} },
     ]
   },
   {
-    stardate: "47655.8 · NEUTRAL ZONE",
-    title: "FIRST CONTACT — UNKNOWN VESSEL",
+    stardate: "47655.8 · ISS IMPERIAL STATION",
+    title: "THE INTENDANT'S INSPECTION",
     intro: [
-      {cls:"info", text:"An unregistered vessel has dropped out of warp 40,000 km ahead."},
-      {cls:"", text:"They are hailing on all frequencies. Universal translator is struggling — this species is completely unknown."},
-      {cls:"system", text:"They appear unarmed. But appearances can be deceiving."},
+      {cls:"alert", text:"⚠ The Intendant has docked. An unscheduled performance review is underway."},
+      {cls:"", text:"Your production quotas are 18% below target this cycle. The last captain who missed quota was fed to the Gorn — after a visit to the agony booth."},
+      {cls:"system", text:"The Intendant is seated in your command chair. They are smiling. That is not a good sign."},
     ],
     choices: [
-      { label:"🖖 Respond warmly — open hailing",
-        outcome:{cls:"good", text:"They are explorers from beyond the galactic barrier. A cultural exchange begins. Historic first contact achieved."},
-        delta:{shields:0, hull:0, crew:+10, score:+40} },
-      { label:"🔍 Scan their vessel first",
-        outcome:{cls:"good", text:"Scans detect concealed weapons — but also life signs in distress. You offer medical aid. They lower their weapons."},
-        delta:{shields:0, hull:0, crew:+5, score:+30} },
-      { label:"🛡 Raise shields and demand identification", style:"red",
-        outcome:{cls:"bad", text:"They interpret this as a declaration of war. A firefight ensues before a ceasefire is negotiated. Damaged relations."},
-        delta:{shields:-25, hull:-15, crew:-10, score:-15} },
-      { label:"📻 Ignore and continue on course",
-        outcome:{cls:"bad", text:"They follow you all the way to Starbase 12. Starfleet is furious at the missed opportunity."},
-        delta:{shields:0, hull:0, crew:-5, score:-10} },
+      { label: "📊 Present falsified performance logs",
+        outcome: {cls:"system", text:"The Intendant accepts your numbers — for now. You've bought time. But they suspect, and they'll be watching every move the ISS Miirr makes from this point forward."},
+        delta: {shields:0, hull:0, crew:0, score:+15} },
+      { label: "💎 Offer a personal tribute — seized valuables",
+        outcome: {cls:"good", text:"The Intendant's expression shifts. A slow smile. The 'review' ends early and favorably. Corruption is the currency of Empire, and you've just made a deposit."},
+        delta: {shields:0, hull:0, crew:0, score:+30} },
+      { label: "🗡 Arrange an accident for the Intendant", style:"red",
+        outcome: {cls:"good", text:"The Intendant's shuttle suffers a catastrophic plasma conduit failure en route back to their vessel. Tragic. You file a deeply sorrowful report with Imperial Command. No one investigates."},
+        delta: {shields:0, hull:0, crew:+5, score:+50} },
+      { label: "📣 Challenge their authority — cite Imperial Law", style:"blue",
+        outcome: {cls:"bad", text:"You cite Regulation 7 — captains cannot be reviewed without cause. The Intendant backs down, publicly humiliated. You've made the most dangerous kind of enemy: a patient one."},
+        delta: {shields:0, hull:-10, crew:-10, score:+10} },
     ]
   },
   {
-    stardate: "47672.1 · DEEP SPACE",
-    title: "FINAL MISSION — DISTRESS SIGNAL",
+    stardate: "47672.1 · DEEP SPACE, SECTOR 9",
+    title: "FINAL MISSION — COMMANDER SPOCK'S SECRET",
     intro: [
-      {cls:"alert", text:"⚠ Priority One distress signal received."},
-      {cls:"", text:"A Federation colony on Veridian III is under attack by Orion pirates. Three ships, heavily armed."},
-      {cls:"info", text:"We are the only vessel in range. 500 colonists are in danger."},
+      {cls:"alert", text:"⚠ Encrypted tightbeam intercepted — source: ISS Enterprise."},
+      {cls:"", text:"Your systems crack it. Commander Spock is advocating for Imperial reform — reducing the agonizer program, ending slave labor. Treasonous ideas, broadcast in secret."},
+      {cls:"info", text:"This information is extraordinary. Spock doesn't know you have it. What you do next could reshape the Empire — or end your career."},
     ],
     choices: [
-      { label:"⚔ Engage all three ships", style:"red",
-        outcome:{cls:"good", text:"A fierce battle — but your crew's training shows. Two ships destroyed, one flees. Colony saved. Casualties: 12."},
-        delta:{shields:-40, hull:-30, crew:-12, score:+50} },
-      { label:"📡 Negotiate — offer them safe passage",
-        outcome:{cls:"good", text:"Bluffing works. You imply a fleet is en route. The pirates cut their losses and warp out. Zero casualties."},
-        delta:{shields:0, hull:0, crew:0, score:+45} },
-      { label:"🌩 Use the nebula for cover — ambush",
-        outcome:{cls:"good", text:"Brilliant tactics. Using the nebula's interference you disable all three ships before they know what hit them."},
-        delta:{shields:-10, hull:-5, crew:-2, score:+55} },
-      { label:"📻 Call for backup and stall", style:"blue",
-        outcome:{cls:"system", text:"Backup arrives in time, but 40 colonists were taken. Shared victory — but the delay cost lives."},
-        delta:{shields:0, hull:0, crew:0, score:+15} },
+      { label: "📡 Report the signal to the Emperor immediately", style:"red",
+        outcome: {cls:"good", text:"You forward the decrypted signal with full authentication codes. Spock is in irons within 24 hours. The Emperor rewards the ISS Miirr with a new patrol sector and a field promotion."},
+        delta: {shields:0, hull:0, crew:0, score:+45} },
+      { label: "💰 Contact Spock — demand resources for silence",
+        outcome: {cls:"good", text:"Spock, ever logical about self-preservation, transfers dilithium reserves and three senior specialists to your command. You've acquired a brilliant, unwilling ally who owes you his freedom."},
+        delta: {shields:0, hull:0, crew:+10, score:+40} },
+      { label: "🗑 Delete the record — let his work continue",
+        outcome: {cls:"system", text:"Something in his logic resonates. You erase the intercept log and say nothing. History may remember this choice differently than the Empire ever would."},
+        delta: {shields:0, hull:0, crew:+5, score:+20} },
+      { label: "🖖 Join Spock's reformist movement", style:"blue",
+        outcome: {cls:"bad", text:"You make contact. Spock welcomes your support. Within weeks, the Emperor's agents have flagged both of you. The noose tightens. The Empire always finds its dissidents."},
+        delta: {shields:-20, hull:-20, crew:-15, score:+5} },
     ]
   },
 ];
@@ -319,31 +530,45 @@ const missions = [
 const MAP_W = 170, MAP_H = 460;
 const CX = MAP_W / 2, CY = MAP_H / 2;
 
+// Generate fixed star field
 const STARS = Array.from({length: 70}, () => ({
-  x: Math.random() * MAP_W, y: Math.random() * MAP_H,
-  r: Math.random() * 1.2 + 0.3, b: Math.random() * 0.6 + 0.4,
+  x: Math.random() * MAP_W,
+  y: Math.random() * MAP_H,
+  r: Math.random() * 1.2 + 0.3,
+  b: Math.random() * 0.6 + 0.4,
 }));
 
-let mapThreats = [];
+let mapAnimFrame = null;
+let mapThreats = [];   // {x,y,vx,vy,color,shape,label,active}
 let mapTick = 0;
 
 function drawShip(ctx, x, y, color, scale=1) {
   ctx.save();
-  ctx.translate(x, y); ctx.scale(scale, scale);
+  ctx.translate(x, y);
+  ctx.scale(scale, scale);
   ctx.beginPath();
+  // saucer
   ctx.ellipse(0, -4, 9, 4, 0, 0, Math.PI * 2);
-  ctx.strokeStyle = color; ctx.lineWidth = 1.2; ctx.stroke();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  // hull
   ctx.beginPath();
   ctx.moveTo(0, 0); ctx.lineTo(0, 12);
-  ctx.lineWidth = 2; ctx.stroke();
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // nacelles
   ctx.beginPath();
   ctx.moveTo(-6, 4); ctx.lineTo(-10, 12);
   ctx.moveTo(6, 4);  ctx.lineTo(10, 12);
-  ctx.lineWidth = 1.2; ctx.stroke();
+  ctx.lineWidth = 1.2;
+  ctx.stroke();
+  // nacelle pods
   ctx.beginPath();
   ctx.ellipse(-10, 13, 3, 1.5, 0, 0, Math.PI * 2);
   ctx.ellipse( 10, 13, 3, 1.5, 0, 0, Math.PI * 2);
-  ctx.fillStyle = color; ctx.fill();
+  ctx.fillStyle = color;
+  ctx.fill();
   ctx.restore();
 }
 
@@ -352,22 +577,39 @@ function drawMap() {
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   mapTick++;
+
   ctx.clearRect(0, 0, MAP_W, MAP_H);
 
+  // Stars
   STARS.forEach(s => {
     const twinkle = s.b + Math.sin(mapTick * 0.03 + s.x) * 0.15;
-    ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${twinkle})`; ctx.fill();
+    ctx.beginPath();
+    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
+    ctx.fill();
   });
 
-  ctx.strokeStyle = 'rgba(255,153,0,0.08)'; ctx.lineWidth = 1;
-  [40, 80, 120].forEach(r => { ctx.beginPath(); ctx.arc(CX, CY, r, 0, Math.PI * 2); ctx.stroke(); });
+  // Grid rings
+  ctx.strokeStyle = 'rgba(255,153,0,0.08)';
+  ctx.lineWidth = 1;
+  [40, 80, 120].forEach(r => {
+    ctx.beginPath();
+    ctx.arc(CX, CY, r, 0, Math.PI * 2);
+    ctx.stroke();
+  });
+  // Crosshair
   ctx.strokeStyle = 'rgba(255,153,0,0.06)';
-  ctx.beginPath(); ctx.moveTo(CX, 0); ctx.lineTo(CX, MAP_H); ctx.moveTo(0, CY); ctx.lineTo(MAP_W, CY); ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(CX, 0); ctx.lineTo(CX, MAP_H);
+  ctx.moveTo(0, CY); ctx.lineTo(MAP_W, CY);
+  ctx.stroke();
 
+  // Threats
   mapThreats.forEach(t => {
     if (!t.active) return;
+    // Move
     t.x += t.vx; t.y += t.vy;
+    // Bounce at edges
     if (t.x < 10 || t.x > MAP_W - 10) t.vx *= -1;
     if (t.y < 10 || t.y > MAP_H - 10) t.vy *= -1;
 
@@ -375,64 +617,106 @@ function drawMap() {
       drawShip(ctx, t.x, t.y, t.color, 0.7);
     } else if (t.shape === 'rift') {
       const pulse = 1 + Math.sin(mapTick * 0.05) * 0.2;
-      ctx.beginPath(); ctx.arc(t.x, t.y, 18 * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = t.color; ctx.lineWidth = 2; ctx.stroke();
-      ctx.beginPath(); ctx.arc(t.x, t.y, 9 * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = t.color; ctx.lineWidth = 1; ctx.globalAlpha = 0.5; ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 18 * pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = t.color;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 9 * pulse, 0, Math.PI * 2);
+      ctx.strokeStyle = t.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 0.5;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     } else if (t.shape === 'blip') {
-      ctx.beginPath(); ctx.arc(t.x, t.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = t.color; ctx.fill();
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = t.color;
+      ctx.fill();
+      // ping ring
       const ping = ((mapTick * 2) % 40) / 40;
-      ctx.beginPath(); ctx.arc(t.x, t.y, 4 + ping * 12, 0, Math.PI * 2);
-      ctx.strokeStyle = t.color; ctx.lineWidth = 1; ctx.globalAlpha = 1 - ping; ctx.stroke(); ctx.globalAlpha = 1;
+      ctx.beginPath();
+      ctx.arc(t.x, t.y, 4 + ping * 12, 0, Math.PI * 2);
+      ctx.strokeStyle = t.color;
+      ctx.lineWidth = 1;
+      ctx.globalAlpha = 1 - ping;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
     }
-    ctx.fillStyle = t.color; ctx.font = '8px Share Tech Mono, monospace';
+
+    // Label
+    ctx.fillStyle = t.color;
+    ctx.font = '8px Share Tech Mono, monospace';
     ctx.fillText(t.label, t.x + 7, t.y - 7);
   });
 
+  // Player ship (always center)
+  // Shield glow
   const shieldAlpha = state.shields / 100 * 0.4;
-  const shieldColor = state.shields > 70 ? '85,153,255' : state.shields > 30 ? '255,153,0' : '255,68,68';
+  const shieldColor = state.shields > 70 ? '85,153,255' :
+                      state.shields > 30 ? '255,153,0' : '255,68,68';
   const glowR = 18 + Math.sin(mapTick * 0.04) * 2;
   const grad = ctx.createRadialGradient(CX, CY, 0, CX, CY, glowR);
   grad.addColorStop(0, `rgba(${shieldColor},${shieldAlpha})`);
   grad.addColorStop(1, `rgba(${shieldColor},0)`);
-  ctx.beginPath(); ctx.arc(CX, CY, glowR, 0, Math.PI * 2); ctx.fillStyle = grad; ctx.fill();
+  ctx.beginPath();
+  ctx.arc(CX, CY, glowR, 0, Math.PI * 2);
+  ctx.fillStyle = grad;
+  ctx.fill();
+
   drawShip(ctx, CX, CY, '#5599ff', 1);
-  ctx.fillStyle = '#5599ff'; ctx.font = 'bold 8px Share Tech Mono, monospace';
+
+  // "MIIRR" label
+  ctx.fillStyle = '#5599ff';
+  ctx.font = 'bold 8px Share Tech Mono, monospace';
   ctx.fillText('MIIRR', CX + 14, CY - 2);
 
-  requestAnimationFrame(drawMap);
+  mapAnimFrame = requestAnimationFrame(drawMap);
 }
 
-function setMissionThreats(idx) {
+function setMissionThreats(missionIdx) {
   mapThreats = [];
-  if (idx === 0) {
-    mapThreats.push({x:CX+55, y:CY-30, vx:-0.3, vy:0.2, color:'#ff4444', shape:'ship', label:'KLINGON', active:true});
-  } else if (idx === 1) {
-    mapThreats.push({x:CX-50, y:CY+20, vx:0.1, vy:-0.1, color:'#cc44ff', shape:'rift', label:'RIFT', active:true});
-  } else if (idx === 2) {
-    mapThreats.push({x:CX+60, y:CY-60, vx:-0.2, vy:0.15, color:'#44ff88', shape:'ship', label:'UNKNOWN', active:true});
-  } else if (idx === 3) {
-    mapThreats.push({x:CX-60, y:CY-50, vx:0.25,  vy:0.2,  color:'#ff9900', shape:'blip', label:'PIRATE', active:true});
-    mapThreats.push({x:CX+65, y:CY+40, vx:-0.2,  vy:-0.15,color:'#ff9900', shape:'blip', label:'PIRATE', active:true});
-    mapThreats.push({x:CX-20, y:CY+70, vx:0.15,  vy:-0.25,color:'#ff9900', shape:'blip', label:'PIRATE', active:true});
+  if (missionIdx === 0) {
+    // Klingon warbird — close and menacing
+    mapThreats.push({x: CX + 55, y: CY - 30, vx: -0.3, vy: 0.2, color: '#ff4444', shape: 'ship', label: 'KLINGON', active: true});
+  } else if (missionIdx === 1) {
+    // Spatial rift — pulsing, drifting
+    mapThreats.push({x: CX - 50, y: CY + 20, vx: 0.1, vy: -0.1, color: '#cc44ff', shape: 'rift', label: 'RIFT', active: true});
+  } else if (missionIdx === 2) {
+    // Unknown vessel — approaching slowly
+    mapThreats.push({x: CX + 60, y: CY - 60, vx: -0.2, vy: 0.15, color: '#44ff88', shape: 'ship', label: 'UNKNOWN', active: true});
+  } else if (missionIdx === 3) {
+    // Three pirate blips surrounding player
+    mapThreats.push({x: CX - 60, y: CY - 50, vx:  0.25, vy:  0.2,  color: '#ff9900', shape: 'blip', label: 'PIRATE', active: true});
+    mapThreats.push({x: CX + 65, y: CY + 40, vx: -0.2,  vy: -0.15, color: '#ff9900', shape: 'blip', label: 'PIRATE', active: true});
+    mapThreats.push({x: CX - 20, y: CY + 70, vx:  0.15, vy: -0.25, color: '#ff9900', shape: 'blip', label: 'PIRATE', active: true});
   }
 }
 
-function clearThreats() { mapThreats.forEach(t => t.active = false); }
+function clearThreats() {
+  mapThreats.forEach(t => t.active = false);
+}
 
 function clamp(v) { return Math.max(0, Math.min(100, v)); }
-function setBar(id, val) { document.getElementById(id).style.width = clamp(val) + '%'; }
+
+function setBar(id, val) {
+  document.getElementById(id).style.width = clamp(val) + '%';
+}
 
 function log(text, cls='') {
   const div = document.getElementById('log');
   const p = document.createElement('p');
   if (cls) p.className = cls;
-  p.textContent = text; div.appendChild(p); div.scrollTop = div.scrollHeight;
+  p.textContent = text;
+  div.appendChild(p);
+  div.scrollTop = div.scrollHeight;
 }
 
 function updateStats() {
-  setBar('bar-shields', state.shields); setBar('bar-hull', state.hull); setBar('bar-crew', state.crew);
+  setBar('bar-shields', state.shields);
+  setBar('bar-hull',    state.hull);
+  setBar('bar-crew',    state.crew);
   document.getElementById('score').textContent = state.score;
   document.getElementById('mission-count').textContent =
     state.mission < missions.length ? `${state.mission + 1} / ${missions.length}` : 'COMPLETE';
@@ -450,12 +734,14 @@ function renderChoices(choices, onPick) {
   });
 }
 
-function disableAll() { document.querySelectorAll('#choices button').forEach(b => b.disabled = true); }
+function disableAll() {
+  document.querySelectorAll('#choices button').forEach(b => b.disabled = true);
+}
 
 function showMission(idx) {
   if (idx >= missions.length) { endGame(); return; }
   const m = missions[idx];
-  document.getElementById('stardate').textContent = `STARDATE ${m.stardate} · WARP 6`;
+  document.getElementById('stardate').textContent = `STARDATE ${m.stardate} · WARP 6 · TERRAN EMPIRE`;
   document.getElementById('scene-title').textContent = m.title;
   setMissionThreats(idx);
   m.intro.forEach(l => log(l.text, l.cls));
@@ -469,7 +755,8 @@ function showMission(idx) {
       state.hull    = clamp(state.hull    + d.hull);
       state.crew    = clamp(state.crew    + d.crew);
       state.score  += d.score;
-      updateStats(); clearThreats();
+      updateStats();
+      clearThreats();
       if (state.hull <= 0) { setTimeout(shipDestroyed, 800); return; }
       setTimeout(() => {
         state.mission++;
@@ -477,7 +764,9 @@ function showMission(idx) {
           log('─'.repeat(40), 'system');
           log('New mission incoming...', 'info');
           setTimeout(() => showMission(state.mission), 1000);
-        } else { setTimeout(endGame, 800); }
+        } else {
+          setTimeout(endGame, 800);
+        }
       }, 1800);
     }, 600);
   });
@@ -485,7 +774,9 @@ function showMission(idx) {
 
 function shipDestroyed() {
   document.getElementById('scene-title').textContent = 'SHIP DESTROYED';
-  log('═'.repeat(40), 'bad'); log('HULL INTEGRITY LOST. USS MIIRR DESTROYED.', 'bad');
+  log('═'.repeat(40), 'bad');
+  log('HULL INTEGRITY LOST. ISS MIIRR DESTROYED.', 'bad');
+  log('The Emperor has already forgotten your name.', 'bad');
   log(`Final score: ${state.score}`, 'system');
   renderChoices([{label:'⟳ Try again'}], () => location.reload());
 }
@@ -494,43 +785,41 @@ function endGame() {
   document.getElementById('scene-title').textContent = 'MISSION COMPLETE';
   log('═'.repeat(40), 'good');
   let rank, cls;
-  if      (state.score >= 150) { rank = 'ADMIRAL — Legendary command.';       cls = 'good'; }
-  else if (state.score >= 100) { rank = 'CAPTAIN — Distinguished service.';   cls = 'good'; }
-  else if (state.score >= 50)  { rank = 'COMMANDER — Competent performance.'; cls = 'info'; }
-  else                         { rank = 'ENSIGN — Much to learn, Captain.';   cls = 'bad';  }
-  log('All missions concluded.', 'system');
+  if      (state.score >= 150) { rank = 'GRAND ADMIRAL — The Emperor\'s favored instrument. Your name is feared across the quadrant.'; cls = 'good'; }
+  else if (state.score >= 100) { rank = 'COMMODORE — Brutal, effective, and still alive. The Empire is pleased.';                     cls = 'good'; }
+  else if (state.score >= 50)  { rank = 'CAPTAIN — You survived. In the Terran Empire, that alone is an achievement.';               cls = 'info'; }
+  else                         { rank = 'ENSIGN — The Emperor is displeased. Sleep with one eye open.';                               cls = 'bad';  }
+  log('All situations concluded.', 'system');
   log(`Final score: ${state.score}`, 'alert');
-  log(`Starfleet rating: ${rank}`, cls);
-  log('Live long and prosper.', 'good');
+  log(`Imperial rating: ${rank}`, cls);
+  log('Long live the Terran Empire.', 'good');
   renderChoices([{label:'⟳ Play again'}], () => location.reload());
 }
 
-// ── Sound Engine ──────────────────────────────────────────
-let audioCtx = null, muted = false, bgNodes = [], bgStarted = false;
-
-function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-function toggleMute() {
-  muted = !muted;
-  document.getElementById('mute-btn').textContent = muted ? '🔇 MUTED' : '🔊 SOUND';
-  bgNodes.forEach(n => { if (n.gain) n.gain.value = muted ? 0 : n._vol; });
-}
-
+// ── Splash / Intro ────────────────────────────────────────
 function playFanfare() {
   const ctx = getCtx();
-  [{f:293.66,t:0.00,dur:0.18},{f:440.00,t:0.16,dur:0.18},{f:587.33,t:0.32,dur:0.22},
-   {f:739.99,t:0.52,dur:0.22},{f:880.00,t:0.72,dur:0.50},{f:587.33,t:0.72,dur:0.50}]
-  .forEach(({f,t,dur}) => {
-    const o = ctx.createOscillator(), g = ctx.createGain();
-    o.type = 'triangle'; o.frequency.value = f;
-    g.gain.setValueAtTime(0, ctx.currentTime+t);
-    g.gain.linearRampToValueAtTime(0.22, ctx.currentTime+t+0.04);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+t+dur+0.3);
+  // Classic Trek-style ascending fanfare: D4 A4 D5 F#5 A5
+  const notes = [
+    {f: 293.66, t: 0.00, dur: 0.18},
+    {f: 440.00, t: 0.16, dur: 0.18},
+    {f: 587.33, t: 0.32, dur: 0.22},
+    {f: 739.99, t: 0.52, dur: 0.22},
+    {f: 880.00, t: 0.72, dur: 0.50},
+    {f: 587.33, t: 0.72, dur: 0.50},  // harmony
+  ];
+  notes.forEach(({f, t, dur}) => {
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    const rev = ctx.createGain(); // fake reverb tail
+    o.type = 'triangle';
+    o.frequency.value = f;
+    g.gain.setValueAtTime(0, ctx.currentTime + t);
+    g.gain.linearRampToValueAtTime(0.22, ctx.currentTime + t + 0.04);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur + 0.3);
     o.connect(g); g.connect(ctx.destination);
-    o.start(ctx.currentTime+t); o.stop(ctx.currentTime+t+dur+0.35);
+    o.start(ctx.currentTime + t);
+    o.stop(ctx.currentTime + t + dur + 0.35);
   });
 }
 
@@ -549,65 +838,112 @@ document.addEventListener('click', e => {
   if (e.target.id === 'splash' || e.target.closest('#splash')) dismissSplash();
 });
 
+// ── Sound Engine ──────────────────────────────────────────
+let audioCtx = null;
+let muted = false;
+let bgNodes = [];
+let bgStarted = false;
+
+function getCtx() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  return audioCtx;
+}
+
+function toggleMute() {
+  muted = !muted;
+  document.getElementById('mute-btn').textContent = muted ? '🔇 MUTED' : '🔊 SOUND';
+  bgNodes.forEach(n => { if (n.gain) n.gain.value = muted ? 0 : n._vol; });
+}
+
 function startBackground() {
-  if (bgStarted) return; bgStarted = true;
+  if (bgStarted) return;
+  bgStarted = true;
   const ctx = getCtx();
   function makeLayer(freq, detune, vol) {
-    const osc = ctx.createOscillator(), gain = ctx.createGain();
-    osc.type = 'sine'; osc.frequency.value = freq; osc.detune.value = detune;
-    gain.gain.value = muted ? 0 : vol; gain._vol = vol;
-    osc.connect(gain); gain.connect(ctx.destination); osc.start(); bgNodes.push(gain);
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = 'sine';
+    osc.frequency.value = freq;
+    osc.detune.value = detune;
+    gain.gain.value = muted ? 0 : vol;
+    gain._vol = vol;
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start();
+    bgNodes.push(gain);
   }
-  makeLayer(48, 0, 0.06); makeLayer(48, 12, 0.04);
-  const warp = ctx.createOscillator(), warpGain = ctx.createGain();
-  const lfo = ctx.createOscillator(), lfoGain = ctx.createGain();
-  warp.type = 'sine'; warp.frequency.value = 110;
-  warpGain.gain.value = muted ? 0 : 0.025; warpGain._vol = 0.025;
-  lfo.frequency.value = 0.07; lfoGain.gain.value = 8;
-  lfo.connect(lfoGain); lfoGain.connect(warp.frequency);
-  warp.connect(warpGain); warpGain.connect(ctx.destination);
-  lfo.start(); warp.start(); bgNodes.push(warpGain);
+  makeLayer(48,  0, 0.06);
+  makeLayer(48, 12, 0.04);
+  const warp = ctx.createOscillator();
+  const warpGain = ctx.createGain();
+  const lfo = ctx.createOscillator();
+  const lfoGain = ctx.createGain();
+  warp.type = 'sine';
+  warp.frequency.value = 110;
+  warpGain.gain.value = muted ? 0 : 0.025;
+  warpGain._vol = 0.025;
+  lfo.frequency.value = 0.07;
+  lfoGain.gain.value = 8;
+  lfo.connect(lfoGain);
+  lfoGain.connect(warp.frequency);
+  warp.connect(warpGain);
+  warpGain.connect(ctx.destination);
+  lfo.start(); warp.start();
+  bgNodes.push(warpGain);
   function randomChime() {
     if (!muted) {
-      const c = getCtx(), f = [523,659,784,1047,1319][Math.floor(Math.random()*5)];
-      const o = c.createOscillator(), g = c.createGain();
-      o.type = 'sine'; o.frequency.value = f;
+      const c = getCtx();
+      const f = [523,659,784,1047,1319][Math.floor(Math.random()*5)];
+      const o = c.createOscillator();
+      const g = c.createGain();
+      o.type = 'sine';
+      o.frequency.value = f;
       g.gain.setValueAtTime(0, c.currentTime);
-      g.gain.linearRampToValueAtTime(0.04, c.currentTime+0.05);
-      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime+1.2);
-      o.connect(g); g.connect(c.destination); o.start(); o.stop(c.currentTime+1.2);
+      g.gain.linearRampToValueAtTime(0.04, c.currentTime + 0.05);
+      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 1.2);
+      o.connect(g); g.connect(c.destination);
+      o.start(); o.stop(c.currentTime + 1.2);
     }
-    setTimeout(randomChime, 4000 + Math.random()*8000);
+    setTimeout(randomChime, 4000 + Math.random() * 8000);
   }
   setTimeout(randomChime, 3000);
 }
 
 function playHover() {
   if (muted) return;
-  const ctx = getCtx(), o = ctx.createOscillator(), g = ctx.createGain();
+  const ctx = getCtx();
+  const o = ctx.createOscillator();
+  const g = ctx.createGain();
   o.type = 'sine';
   o.frequency.setValueAtTime(1400, ctx.currentTime);
-  o.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime+0.06);
+  o.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.06);
   g.gain.setValueAtTime(0.12, ctx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.07);
-  o.connect(g); g.connect(ctx.destination); o.start(); o.stop(ctx.currentTime+0.07);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
+  o.connect(g); g.connect(ctx.destination);
+  o.start(); o.stop(ctx.currentTime + 0.07);
 }
 
 function playClick() {
   if (muted) return;
   const ctx = getCtx();
-  const o1 = ctx.createOscillator(), g1 = ctx.createGain();
-  o1.type = 'square'; o1.frequency.value = 660;
+  const o1 = ctx.createOscillator();
+  const g1 = ctx.createGain();
+  o1.type = 'square';
+  o1.frequency.value = 660;
   g1.gain.setValueAtTime(0.15, ctx.currentTime);
-  g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.09);
-  o1.connect(g1); g1.connect(ctx.destination); o1.start(); o1.stop(ctx.currentTime+0.09);
-  const o2 = ctx.createOscillator(), g2 = ctx.createGain();
-  o2.type = 'square'; o2.frequency.value = 990;
-  g2.gain.setValueAtTime(0, ctx.currentTime+0.08);
-  g2.gain.linearRampToValueAtTime(0.15, ctx.currentTime+0.10);
-  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.22);
+  g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
+  o1.connect(g1); g1.connect(ctx.destination);
+  o1.start(); o1.stop(ctx.currentTime + 0.09);
+  const o2 = ctx.createOscillator();
+  const g2 = ctx.createGain();
+  o2.type = 'square';
+  o2.frequency.value = 990;
+  g2.gain.setValueAtTime(0, ctx.currentTime + 0.08);
+  g2.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.10);
+  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
   o2.connect(g2); g2.connect(ctx.destination);
-  o2.start(ctx.currentTime+0.08); o2.stop(ctx.currentTime+0.22);
+  o2.start(ctx.currentTime + 0.08);
+  o2.stop(ctx.currentTime + 0.22);
 }
 
 document.addEventListener('mouseenter', e => {
