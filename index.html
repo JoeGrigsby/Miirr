@@ -2,960 +2,919 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Star Trek: The Man in the Mirror — ISS Miirr</title>
+<title>MIIRR — Star Trek: Ascendancy</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Oswald:wght@400;700&family=Rajdhani:wght@500;700&display=swap');
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+  background: #000;
+  color: #ff9900;
+  font-family: 'Courier New', monospace;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
+/* ── CIVILIZATION SELECT ── */
+#civ-select {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background: radial-gradient(ellipse at center, #001133 0%, #000 70%);
+}
+#civ-select h1 {
+  font-size: 2.8em;
+  color: #ff9900;
+  letter-spacing: 0.4em;
+  text-transform: uppercase;
+  margin-bottom: 0.2em;
+}
+#civ-select h2 {
+  font-size: 1em;
+  color: #6699cc;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  margin-bottom: 3em;
+}
+.civ-cards { display: flex; gap: 2em; }
+.civ-card {
+  width: 230px;
+  border: 2px solid;
+  border-radius: 4px;
+  padding: 1.5em 1.2em;
+  cursor: pointer;
+  transition: transform 0.15s, filter 0.15s;
+  text-align: center;
+}
+.civ-card:hover { transform: translateY(-4px); filter: brightness(1.2); }
+.civ-card.fed  { border-color: #4488ff; }
+.civ-card.kli  { border-color: #cc2200; }
+.civ-card.rom  { border-color: #00bb44; }
+.civ-card h3 { font-size: 1em; letter-spacing: 0.2em; text-transform: uppercase; margin-bottom: 0.3em; }
+.civ-card.fed h3 { color: #4488ff; }
+.civ-card.kli h3 { color: #cc2200; }
+.civ-card.rom h3 { color: #00bb44; }
+.civ-icon { font-size: 2.8em; margin: 0.4em 0; }
+.civ-card p { font-size: 0.78em; color: #999; line-height: 1.5; margin-bottom: 1em; }
+.civ-stats { text-align: left; font-size: 0.75em; }
+.civ-stats div { padding: 0.15em 0; color: #bbb; }
+.civ-stats span { float: right; }
 
-  body {
-    background: #000;
-    color: #ff9900;
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 20px;
-  }
+/* ── MAIN GAME LAYOUT ── */
+#game { display: none; height: 100vh; flex-direction: column; }
 
-  .lcars-header {
-    width: 100%;
-    max-width: 980px;
-    display: flex;
-    align-items: stretch;
-    margin-bottom: 6px;
-    height: 60px;
-  }
-  .lcars-header .pill {
-    background: #ff9900;
-    width: 120px;
-    border-radius: 30px 0 0 30px;
-  }
-  .lcars-header .stripe {
-    background: #ff9900;
-    height: 18px;
-    flex: 1;
-    align-self: flex-end;
-  }
-  .lcars-header .block {
-    background: #cc6600;
-    width: 60px;
-    margin-left: 6px;
-    align-self: flex-end;
-    height: 18px;
-  }
-  .lcars-header .block2 {
-    background: #ff9900;
-    width: 40px;
-    margin-left: 6px;
-    align-self: flex-end;
-    height: 18px;
-  }
-  .lcars-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 22px;
-    color: #ff9900;
-    letter-spacing: 4px;
-    text-align: center;
-    margin-bottom: 4px;
-  }
-  .lcars-subtitle {
-    font-size: 11px;
-    color: #cc6600;
-    letter-spacing: 3px;
-    text-align: center;
-    margin-bottom: 16px;
-  }
+#top-bar {
+  background: #110800;
+  border-bottom: 3px solid #ff9900;
+  padding: 0.35em 1em;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  height: 42px;
+}
+#top-bar .game-title { font-size: 1.1em; letter-spacing: 0.25em; }
+.resources { display: flex; gap: 1.8em; font-size: 0.82em; align-items: center; }
+.res-prod      { color: #ff9900; }
+.res-research  { color: #44aaff; }
+.res-influence { color: #cc55ff; }
+.res-asc       { color: #ffdd00; }
 
-  .main {
-    width: 100%;
-    max-width: 980px;
-    display: flex;
-    gap: 12px;
-  }
+#main-area { display: flex; flex: 1; overflow: hidden; min-height: 0; }
 
-  .sidebar {
-    width: 140px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-  .sidebar-block {
-    background: #ff9900;
-    border-radius: 20px 0 0 20px;
-    padding: 8px 12px;
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
-    color: #000;
-    font-weight: bold;
-    letter-spacing: 1px;
-  }
-  .sidebar-block.blue  { background: #5599ff; }
-  .sidebar-block.red   { background: #ff4444; }
-  .sidebar-block.teal  { background: #44ccbb; }
-  .sidebar-block.spacer { background: #331100; height: 40px; }
+#map-container {
+  flex: 1;
+  position: relative;
+  background: #000510;
+  overflow: hidden;
+}
+#galaxy-map { width: 100%; height: 100%; }
 
-  .stat-label { font-size: 9px; color: #cc6600; letter-spacing: 2px; margin-top: 8px; margin-bottom: 2px; }
-  .stat-bar-bg { background: #1a0d00; height: 10px; border-radius: 5px; overflow: hidden; }
-  .stat-bar { height: 100%; border-radius: 5px; transition: width 0.5s; }
-  .stat-bar.shields { background: #5599ff; }
-  .stat-bar.hull    { background: #ff9900; }
-  .stat-bar.crew    { background: #44ccbb; }
+#sidebar {
+  width: 270px;
+  background: #080814;
+  border-left: 3px solid #ff9900;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.s-panel { border-bottom: 1px solid #1a1a2e; padding: 0.7em 0.8em; flex-shrink: 0; }
+.s-title {
+  font-size: 0.65em;
+  letter-spacing: 0.2em;
+  color: #ff9900;
+  text-transform: uppercase;
+  border-bottom: 1px solid #ff9900;
+  margin-bottom: 0.5em;
+  padding-bottom: 0.2em;
+}
+.s-content { font-size: 0.78em; color: #ccc; line-height: 1.5; }
+.action-btn {
+  display: block; width: 100%; margin: 0.25em 0;
+  padding: 0.35em 0.7em;
+  background: #110800; border: 1px solid #ff9900;
+  color: #ff9900; font-family: 'Courier New', monospace;
+  font-size: 0.78em; cursor: pointer; text-align: left;
+  letter-spacing: 0.04em; transition: background 0.1s;
+}
+.action-btn:hover:not(:disabled) { background: #2a1000; }
+.action-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+.action-btn.end-turn { border-color: #ffdd00; color: #ffdd00; }
+.action-btn.cancel   { border-color: #ff4444; color: #ff4444; }
 
-  .panel {
-    flex: 1;
-    border: 2px solid #ff9900;
-    border-left: none;
-    border-right: none;
-    border-radius: 0;
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-    min-height: 480px;
-  }
+#log-panel {
+  flex: 1; overflow-y: auto; padding: 0.5em 0.8em; min-height: 0;
+  scrollbar-width: thin; scrollbar-color: #333 #000;
+}
+.le { font-size: 0.72em; color: #888; padding: 0.18em 0; border-bottom: 1px solid #0d0d1a; line-height: 1.4; }
+.le.ev  { color: #ff9900; }
+.le.cbt { color: #ff4444; }
+.le.dis { color: #44aaff; }
+.le.vic { color: #ffdd00; font-weight: bold; font-size: 0.8em; }
+.le.sep { color: #334; font-style: italic; }
 
-  /* ── Space map ── */
-  .map-panel {
-    width: 170px;
-    flex-shrink: 0;
-    border: 2px solid #ff9900;
-    border-left: none;
-    border-radius: 0 12px 12px 0;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-  }
-  .map-label {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 11px;
-    color: #000;
-    background: #ff9900;
-    text-align: center;
-    padding: 4px;
-    letter-spacing: 2px;
-    font-weight: bold;
-  }
-  #map-canvas {
-    flex: 1;
-    display: block;
-    background: #000;
-  }
+#bottom-bar {
+  background: #110800; border-top: 2px solid #ff9900;
+  padding: 0.3em 1em;
+  display: flex; justify-content: space-between; align-items: center;
+  font-size: 0.78em; flex-shrink: 0; height: 32px;
+}
+#sel-info { color: #bbb; }
+#phase-info { color: #ff9900; }
 
-  .stardate {
-    font-size: 11px;
-    color: #cc6600;
-    letter-spacing: 2px;
-    border-bottom: 1px solid #331100;
-    padding-bottom: 8px;
-  }
+/* ── MAP SVG ── */
+.sys-node { cursor: pointer; }
+.sys-node:hover .sys-ring { opacity: 1 !important; }
+.lane { stroke: #0d1a26; stroke-width: 1; stroke-dasharray: 5,4; fill: none; }
+.sys-label { font-size: 9px; fill: #778899; pointer-events: none; }
+.sys-unk { font-size: 11px; fill: #2a3a4a; pointer-events: none; }
+.ship-dot { cursor: pointer; }
 
-  .scene-title {
-    font-family: 'Oswald', sans-serif;
-    font-size: 14px;
-    color: #ff4444;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    min-height: 20px;
-  }
-
-  .log {
-    flex: 1;
-    background: #0a0500;
-    border: 1px solid #331100;
-    border-radius: 6px;
-    padding: 14px;
-    font-size: 13px;
-    line-height: 1.8;
-    overflow-y: auto;
-    max-height: 260px;
-  }
-  .log p { margin-bottom: 6px; }
-  .log p.system { color: #cc6600; }
-  .log p.good   { color: #44cc44; }
-  .log p.bad    { color: #ff4444; }
-  .log p.info   { color: #5599ff; }
-  .log p.alert  { color: #ff9900; font-weight: bold; }
-
-  .choices {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  .choices-label {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 12px;
-    color: #cc6600;
-    letter-spacing: 3px;
-    margin-bottom: 2px;
-  }
-
-  button {
-    background: #1a0d00;
-    border: 1px solid #ff9900;
-    color: #ff9900;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    padding: 10px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: left;
-    transition: background 0.15s, color 0.15s;
-    letter-spacing: 1px;
-  }
-  button:hover  { background: #ff9900; color: #000; }
-  button.blue   { border-color: #5599ff; color: #5599ff; }
-  button.blue:hover { background: #5599ff; color: #000; }
-  button.red    { border-color: #ff4444; color: #ff4444; }
-  button.red:hover  { background: #ff4444; color: #000; }
-  button:disabled   { opacity: 0.3; cursor: default; }
-
-  .lcars-footer {
-    width: 100%;
-    max-width: 980px;
-    display: flex;
-    gap: 6px;
-    margin-top: 6px;
-  }
-  .lcars-footer div { background: #cc6600; height: 12px; border-radius: 6px; }
-  .lcars-footer .f1 { flex: 3; background: #ff9900; }
-  .lcars-footer .f2 { flex: 1; }
-  .lcars-footer .f3 { flex: 2; background: #5599ff; }
-
-  .mute-btn {
-    position: fixed;
-    top: 14px;
-    right: 18px;
-    background: #1a0d00;
-    border: 1px solid #cc6600;
-    color: #cc6600;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 11px;
-    padding: 5px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    z-index: 100;
-  }
-  .mute-btn:hover { background: #cc6600; color: #000; }
-
-  /* ── Splash screen ── */
-  #splash {
-    position: fixed;
-    inset: 0;
-    background: #000;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-    transition: opacity 1.2s ease;
-  }
-  #splash.fade-out { opacity: 0; pointer-events: none; }
-
-  .splash-star-trek {
-    font-family: 'Oswald', sans-serif;
-    font-size: clamp(32px, 8vw, 80px);
-    font-weight: 700;
-    color: #ff9900;
-    letter-spacing: 12px;
-    text-transform: uppercase;
-    text-shadow: 0 0 40px #ff6600, 0 0 80px #ff3300;
-    animation: pulse-glow 2s ease-in-out infinite;
-  }
-  .splash-subtitle {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(12px, 2.5vw, 22px);
-    color: #cc6600;
-    letter-spacing: 6px;
-    margin-top: 14px;
-    text-transform: uppercase;
-  }
-  .splash-ship {
-    margin: 40px 0 30px;
-    opacity: 0.7;
-  }
-  .splash-prompt {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 13px;
-    color: #5599ff;
-    letter-spacing: 3px;
-    animation: blink 1.2s step-end infinite;
-    margin-top: 10px;
-  }
-  .splash-lcars-bar {
-    position: absolute;
-    bottom: 0;
-    left: 0; right: 0;
-    height: 8px;
-    background: linear-gradient(to right, #ff9900 60%, #cc6600 80%, #5599ff 100%);
-  }
-  .splash-lcars-top {
-    position: absolute;
-    top: 0;
-    left: 0; right: 0;
-    height: 8px;
-    background: linear-gradient(to right, #5599ff 0%, #cc6600 20%, #ff9900 40%);
-  }
-  @keyframes pulse-glow {
-    0%, 100% { text-shadow: 0 0 40px #ff6600, 0 0 80px #ff3300; }
-    50%       { text-shadow: 0 0 60px #ffaa00, 0 0 120px #ff6600; }
-  }
-  @keyframes blink {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0; }
-  }
-  .splash-mirror-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: clamp(16px, 3.5vw, 34px);
-    font-weight: 700;
-    color: #ff4444;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    text-shadow: 0 0 20px #cc0000, 0 0 40px #880000;
-    margin-top: 6px;
-  }
-  .splash-version {
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    color: #cc6600;
-    letter-spacing: 3px;
-    margin-top: 8px;
-  }
+/* ── MODAL ── */
+#modal {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.85); z-index: 200;
+  align-items: center; justify-content: center;
+}
+#modal.show { display: flex; }
+#modal-box {
+  background: #080814; border: 2px solid #ff9900;
+  padding: 2em; max-width: 420px; width: 90%; text-align: center;
+}
+#modal-title { color: #ffdd00; margin-bottom: 0.5em; font-size: 1.2em; letter-spacing: 0.15em; }
+#modal-body  { color: #bbb; margin-bottom: 1.5em; font-size: 0.85em; line-height: 1.6; }
+.m-btn {
+  padding: 0.45em 1.4em; background: #110800;
+  border: 1px solid #ff9900; color: #ff9900;
+  font-family: 'Courier New', monospace; cursor: pointer;
+  font-size: 0.85em; margin: 0.3em; transition: background 0.1s;
+}
+.m-btn:hover { background: #2a1000; }
+.m-btn.tech-btn { display: block; width: 100%; text-align: left; margin-bottom: 0.4em; font-size: 0.78em; }
+.m-btn.tech-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 </style>
 </head>
 <body>
 
-<!-- Splash screen -->
-<div id="splash">
-  <div class="splash-lcars-top"></div>
-  <div class="splash-star-trek">Star Trek</div>
-  <div class="splash-mirror-title">The Man in the Mirror</div>
-  <div class="splash-version">VERSION 4.0</div>
-  <div class="splash-subtitle">Imperial Command · ISS Miirr · Terran Empire</div>
-  <svg class="splash-ship" width="120" height="80" viewBox="0 0 120 80">
-    <!-- saucer -->
-    <ellipse cx="60" cy="32" rx="36" ry="14" fill="none" stroke="#5599ff" stroke-width="1.5" opacity="0.8"/>
-    <ellipse cx="60" cy="32" rx="18" ry="7" fill="#0a0a1a" stroke="#ff9900" stroke-width="1"/>
-    <!-- hull -->
-    <line x1="60" y1="46" x2="60" y2="70" stroke="#5599ff" stroke-width="3"/>
-    <!-- nacelles -->
-    <line x1="42" y1="52" x2="30" y2="65" stroke="#5599ff" stroke-width="1.5"/>
-    <line x1="78" y1="52" x2="90" y2="65" stroke="#5599ff" stroke-width="1.5"/>
-    <ellipse cx="26" cy="66" rx="8" ry="3" fill="none" stroke="#ff9900" stroke-width="1.5"/>
-    <ellipse cx="94" cy="66" rx="8" ry="3" fill="none" stroke="#ff9900" stroke-width="1.5"/>
-    <!-- nacelle glow -->
-    <ellipse cx="26" cy="66" rx="4" ry="1.5" fill="#5599ff" opacity="0.6"/>
-    <ellipse cx="94" cy="66" rx="4" ry="1.5" fill="#5599ff" opacity="0.6"/>
-  </svg>
-  <div class="splash-prompt">— PRESS ANY KEY TO BEGIN —</div>
-  <div class="splash-lcars-bar"></div>
-</div>
-
-<button class="mute-btn" id="mute-btn" onclick="toggleMute()">🔊 SOUND</button>
-
-<div class="lcars-header">
-  <div class="pill"></div>
-  <div style="flex:1; display:flex; flex-direction:column; justify-content:flex-end; padding-left:10px;">
-    <div class="lcars-title">IMPERIAL COMMAND</div>
-    <div class="stripe"></div>
-  </div>
-  <div class="block"></div>
-  <div class="block2"></div>
-</div>
-
-<div class="lcars-subtitle">ISS MIIRR · ISS-1701-M · TERRAN EMPIRE · BRIDGE INTERFACE</div>
-
-<div class="main">
-  <div class="sidebar">
-    <div class="sidebar-block">NAVIGATION</div>
-    <div class="sidebar-block blue">TACTICAL</div>
-    <div class="sidebar-block red">ALERT</div>
-    <div class="sidebar-block teal">COMMS</div>
-    <div class="sidebar-block spacer"></div>
-
-    <div style="padding: 0 8px;">
-      <div class="stat-label">SHIELDS</div>
-      <div class="stat-bar-bg"><div class="stat-bar shields" id="bar-shields" style="width:100%"></div></div>
-
-      <div class="stat-label">HULL</div>
-      <div class="stat-bar-bg"><div class="stat-bar hull" id="bar-hull" style="width:100%"></div></div>
-
-      <div class="stat-label">CREW</div>
-      <div class="stat-bar-bg"><div class="stat-bar crew" id="bar-crew" style="width:100%"></div></div>
-
-      <div class="stat-label" style="margin-top:16px;">SCORE</div>
-      <div style="font-size:20px; color:#ff9900;" id="score">0</div>
-
-      <div class="stat-label" style="margin-top:12px;">MISSION</div>
-      <div style="font-size:11px; color:#5599ff;" id="mission-count">1 / 4</div>
+<!-- Civilization Select -->
+<div id="civ-select">
+  <h1>⬡ MIIRR ⬡</h1>
+  <h2>Star Trek : Ascendancy</h2>
+  <div class="civ-cards">
+    <div class="civ-card fed" onclick="startGame('federation')">
+      <h3>United Federation</h3>
+      <div class="civ-icon" style="color:#4488ff">✦</div>
+      <p>Diplomacy and exploration drive humanity's greatest achievement across the stars.</p>
+      <div class="civ-stats">
+        <div>⚙ Production    <span>★★☆</span></div>
+        <div>🔬 Research      <span>★★★</span></div>
+        <div>◈ Influence      <span>★★★</span></div>
+        <div>⚔ Combat        <span>★★☆</span></div>
+      </div>
     </div>
-  </div>
-
-  <div class="panel">
-    <div class="stardate" id="stardate">STARDATE 47634.4 · SECTOR 001 · WARP 6 · TERRAN EMPIRE</div>
-    <div class="scene-title" id="scene-title">AWAITING ORDERS</div>
-
-    <div class="log" id="log">
-      <p class="system">Imperial bridge systems online.</p>
-      <p class="system">All stations report ready. Agonizers charged.</p>
-      <p>Welcome, Captain. The ISS Miirr is yours to command — for now.</p>
-      <p>You will face 4 situations. Survive them. Advance through them. Trust no one.</p>
+    <div class="civ-card kli" onclick="startGame('klingon')">
+      <h3>Klingon Empire</h3>
+      <div class="civ-icon" style="color:#cc2200">⚔</div>
+      <p>Conquest and honor define the warrior spirit of the Empire's relentless expansion.</p>
+      <div class="civ-stats">
+        <div>⚙ Production    <span>★★★</span></div>
+        <div>🔬 Research      <span>★★☆</span></div>
+        <div>◈ Influence      <span>★☆☆</span></div>
+        <div>⚔ Combat        <span>★★★★</span></div>
+      </div>
     </div>
-
-    <div class="choices" id="choices">
-      <div class="choices-label">CAPTAIN'S OPTIONS</div>
+    <div class="civ-card rom" onclick="startGame('romulan')">
+      <h3>Romulan Empire</h3>
+      <div class="civ-icon" style="color:#00bb44">◈</div>
+      <p>Patience, cunning, and intrigue are the weapons of those who operate from the shadows.</p>
+      <div class="civ-stats">
+        <div>⚙ Production    <span>★★☆</span></div>
+        <div>🔬 Research      <span>★★☆</span></div>
+        <div>◈ Influence      <span>★★★★</span></div>
+        <div>⚔ Combat        <span>★★★</span></div>
+      </div>
     </div>
-  </div>
-
-  <!-- Space map -->
-  <div class="map-panel">
-    <div class="map-label">TACTICAL MAP</div>
-    <canvas id="map-canvas" width="170" height="460"></canvas>
   </div>
 </div>
 
-<div class="lcars-footer">
-  <div class="f1"></div><div class="f2"></div><div class="f3"></div>
+<!-- Main Game -->
+<div id="game">
+  <div id="top-bar">
+    <div class="game-title" id="civ-title">⬡ MIIRR</div>
+    <div class="resources">
+      <span class="res-prod">⚙ <b id="rp">0</b></span>
+      <span class="res-research">🔬 <b id="rr">0</b></span>
+      <span class="res-influence">◈ <b id="ri">0</b></span>
+      <span class="res-asc">✦ Ascendancy <b id="ra">0</b>/20</span>
+    </div>
+    <div id="turn-counter" style="color:#888">Turn <span id="tn">1</span></div>
+  </div>
+
+  <div id="main-area">
+    <div id="map-container">
+      <svg id="galaxy-map" viewBox="0 0 800 560" preserveAspectRatio="xMidYMid meet"></svg>
+    </div>
+
+    <div id="sidebar">
+      <div class="s-panel">
+        <div class="s-title">Actions — <span id="acts-left">3</span> remaining</div>
+        <button class="action-btn" id="btn-explore"   onclick="doExplore()">🔭 Explore System</button>
+        <button class="action-btn" id="btn-colonize"  onclick="doColonize()">🏛 Colonize System</button>
+        <button class="action-btn" id="btn-move"      onclick="doMove()">🚀 Move Ship</button>
+        <button class="action-btn" id="btn-build"     onclick="doBuild()">🔧 Build Ship (3⚙)</button>
+        <button class="action-btn" id="btn-research"  onclick="doResearch()">🔬 Research Tech</button>
+        <button class="action-btn end-turn"            onclick="endTurn()">⏭ End Turn</button>
+      </div>
+
+      <div class="s-panel">
+        <div class="s-title">Selected</div>
+        <div class="s-content" id="sel-panel">Nothing selected</div>
+      </div>
+
+      <div class="s-panel">
+        <div class="s-title">Galaxy</div>
+        <div class="s-content" id="galaxy-panel"></div>
+      </div>
+
+      <div class="s-title" style="padding:0.4em 0.8em;background:#080814;flex-shrink:0">Mission Log</div>
+      <div id="log-panel"></div>
+    </div>
+  </div>
+
+  <div id="bottom-bar">
+    <div id="sel-info">Click a system or ship to select</div>
+    <div id="phase-info">Player Turn</div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="modal">
+  <div id="modal-box">
+    <h2 id="modal-title"></h2>
+    <p id="modal-body"></p>
+    <div id="modal-btns"></div>
+  </div>
 </div>
 
 <script>
-const state = {
-  shields: 100,
-  hull: 100,
-  crew: 100,
-  score: 0,
-  mission: 0,
+// ═══════════════════════════════════════════════════════════
+// DATA
+// ═══════════════════════════════════════════════════════════
+
+const CIVS = {
+  federation: {
+    name: 'United Federation of Planets', short: 'Federation',
+    color: '#4488ff', sym: '✦',
+    prod: 2, res: 3, inf: 3, com: 2,
+    actions: 3,
+    home: 'sol',
+    techs: ['warp_drive','deflector_shields','diplomacy_corps','advanced_sensors','replicators'],
+  },
+  klingon: {
+    name: 'Klingon Empire', short: 'Klingons',
+    color: '#cc2200', sym: '⚔',
+    prod: 3, res: 2, inf: 1, com: 4,
+    actions: 3,
+    home: 'qonos',
+    techs: ['warp_drive','disruptors','battle_tactics','cloaking_device','warriors_code'],
+  },
+  romulan: {
+    name: 'Romulan Star Empire', short: 'Romulans',
+    color: '#00bb44', sym: '◈',
+    prod: 2, res: 2, inf: 4, com: 3,
+    actions: 3,
+    home: 'romulus',
+    techs: ['warp_drive','cloaking_device','tal_shiar','singularity_core','deception_protocol'],
+  },
 };
 
-const missions = [
-  {
-    stardate: "47634.4 · SECTOR 001",
-    title: "MUTINY — FIRST OFFICER SEIZES ENGINEERING",
-    intro: [
-      {cls:"alert", text:"⚠ INTERNAL SECURITY ALERT — Deck 12 sealed."},
-      {cls:"", text:"First Officer T'Lan has barricaded Engineering with a dozen loyal crew. They're broadcasting on the ship-wide channel: your command is over."},
-      {cls:"info", text:"In the Terran Empire, this was inevitable. How you respond will define the rest of your captaincy."},
-    ],
-    choices: [
-      { label: "⚔ Storm Engineering — execute all mutineers", style:"red",
-        outcome: {cls:"good", text:"Your security team floods Engineering. T'Lan and the conspirators are dragged to the agonizer booth, then spaced. Brutal. Effective. The crew's loyalty is absolute — for now."},
-        delta: {shields:0, hull:0, crew:-12, score:+30} },
-      { label: "📡 Offer T'Lan a public pardon and promotion",
-        outcome: {cls:"good", text:"You broadcast a deal: swear loyalty on-screen and become Chief of Security. T'Lan accepts. They owe you everything — and they know it."},
-        delta: {shields:0, hull:0, crew:+10, score:+20} },
-      { label: "🗡 Challenge T'Lan to personal combat", style:"red",
-        outcome: {cls:"good", text:"You stride into Engineering alone. The fight is short. You leave T'Lan's body as a message for the rest of the crew. No one questions your command after that."},
-        delta: {shields:0, hull:0, crew:+5, score:+35} },
-      { label: "🛡 Seal Engineering and wait them out", style:"blue",
-        outcome: {cls:"bad", text:"Three days pass. The crew watches the standoff in silence. T'Lan eventually surrenders — but the hesitation you showed is a wound. Others are already taking notes."},
-        delta: {shields:0, hull:0, crew:-10, score:-5} },
-    ]
-  },
-  {
-    stardate: "47641.2 · CARDASSIAN BORDER",
-    title: "OPPORTUNITY — ALLIANCE FREIGHTER ADRIFT",
-    intro: [
-      {cls:"info", text:"Sensors detect an Alliance freighter hauling dilithium crystals — warp drive crippled, drifting. No escort."},
-      {cls:"", text:"The Intendant's standing orders say to respect Alliance shipping lanes. But 500 kilograms of dilithium is 500 kilograms."},
-      {cls:"system", text:"Your helmsman is already angling toward intercept. Awaiting your order, Captain."},
-    ],
-    choices: [
-      { label: "🚀 Attack and seize the full cargo", style:"red",
-        outcome: {cls:"good", text:"The freighter surrenders without a fight. The dilithium is loaded in under an hour. The Alliance will lodge a protest — you'll deal with that later. The crew is pleased."},
-        delta: {shields:-5, hull:-5, crew:+5, score:+40} },
-      { label: "💰 Hail them — demand half as tribute",
-        outcome: {cls:"good", text:"The Ferengi captain agrees instantly. Half the dilithium transferred with no shots fired and no official incident. Smart, profitable, and deniable."},
-        delta: {shields:0, hull:0, crew:0, score:+30} },
-      { label: "📻 Report their position to the Intendant", style:"blue",
-        outcome: {cls:"system", text:"Political chess. The Intendant raids the freighter and owes you a favor. No personal risk, modest indirect reward — and a dangerous ally now in your debt."},
-        delta: {shields:0, hull:0, crew:0, score:+20} },
-      { label: "🤝 Let them pass — follow standing orders",
-        outcome: {cls:"bad", text:"You follow orders. The Intendant is satisfied. Your crew is not. Passing up easy wealth in the Terran Empire is seen as weakness, not discipline."},
-        delta: {shields:0, hull:0, crew:-10, score:+5} },
-    ]
-  },
-  {
-    stardate: "47655.8 · ISS IMPERIAL STATION",
-    title: "THE INTENDANT'S INSPECTION",
-    intro: [
-      {cls:"alert", text:"⚠ The Intendant has docked. An unscheduled performance review is underway."},
-      {cls:"", text:"Your production quotas are 18% below target this cycle. The last captain who missed quota was fed to the Gorn — after a visit to the agony booth."},
-      {cls:"system", text:"The Intendant is seated in your command chair. They are smiling. That is not a good sign."},
-    ],
-    choices: [
-      { label: "📊 Present falsified performance logs",
-        outcome: {cls:"system", text:"The Intendant accepts your numbers — for now. You've bought time. But they suspect, and they'll be watching every move the ISS Miirr makes from this point forward."},
-        delta: {shields:0, hull:0, crew:0, score:+15} },
-      { label: "💎 Offer a personal tribute — seized valuables",
-        outcome: {cls:"good", text:"The Intendant's expression shifts. A slow smile. The 'review' ends early and favorably. Corruption is the currency of Empire, and you've just made a deposit."},
-        delta: {shields:0, hull:0, crew:0, score:+30} },
-      { label: "🗡 Arrange an accident for the Intendant", style:"red",
-        outcome: {cls:"good", text:"The Intendant's shuttle suffers a catastrophic plasma conduit failure en route back to their vessel. Tragic. You file a deeply sorrowful report with Imperial Command. No one investigates."},
-        delta: {shields:0, hull:0, crew:+5, score:+50} },
-      { label: "📣 Challenge their authority — cite Imperial Law", style:"blue",
-        outcome: {cls:"bad", text:"You cite Regulation 7 — captains cannot be reviewed without cause. The Intendant backs down, publicly humiliated. You've made the most dangerous kind of enemy: a patient one."},
-        delta: {shields:0, hull:-10, crew:-10, score:+10} },
-    ]
-  },
-  {
-    stardate: "47672.1 · DEEP SPACE, SECTOR 9",
-    title: "FINAL MISSION — COMMANDER SPOCK'S SECRET",
-    intro: [
-      {cls:"alert", text:"⚠ Encrypted tightbeam intercepted — source: ISS Enterprise."},
-      {cls:"", text:"Your systems crack it. Commander Spock is advocating for Imperial reform — reducing the agonizer program, ending slave labor. Treasonous ideas, broadcast in secret."},
-      {cls:"info", text:"This information is extraordinary. Spock doesn't know you have it. What you do next could reshape the Empire — or end your career."},
-    ],
-    choices: [
-      { label: "📡 Report the signal to the Emperor immediately", style:"red",
-        outcome: {cls:"good", text:"You forward the decrypted signal with full authentication codes. Spock is in irons within 24 hours. The Emperor rewards the ISS Miirr with a new patrol sector and a field promotion."},
-        delta: {shields:0, hull:0, crew:0, score:+45} },
-      { label: "💰 Contact Spock — demand resources for silence",
-        outcome: {cls:"good", text:"Spock, ever logical about self-preservation, transfers dilithium reserves and three senior specialists to your command. You've acquired a brilliant, unwilling ally who owes you his freedom."},
-        delta: {shields:0, hull:0, crew:+10, score:+40} },
-      { label: "🗑 Delete the record — let his work continue",
-        outcome: {cls:"system", text:"Something in his logic resonates. You erase the intercept log and say nothing. History may remember this choice differently than the Empire ever would."},
-        delta: {shields:0, hull:0, crew:+5, score:+20} },
-      { label: "🖖 Join Spock's reformist movement", style:"blue",
-        outcome: {cls:"bad", text:"You make contact. Spock welcomes your support. Within weeks, the Emperor's agents have flagged both of you. The noose tightens. The Empire always finds its dissidents."},
-        delta: {shields:-20, hull:-20, crew:-15, score:+5} },
-    ]
-  },
+const TECH = {
+  warp_drive:         { name:'Warp Drive',           cost:0, eff:'+1 move range',              auto:true },
+  deflector_shields:  { name:'Deflector Shields',    cost:4, eff:'+1 defense in combat' },
+  diplomacy_corps:    { name:'Diplomacy Corps',       cost:5, eff:'+1 Influence per turn' },
+  advanced_sensors:   { name:'Advanced Sensors',     cost:4, eff:'Reveal all adjacent systems on explore' },
+  replicators:        { name:'Replicators',           cost:6, eff:'+1 Production per turn' },
+  disruptors:         { name:'Disruptor Banks',       cost:4, eff:'+2 attack in combat' },
+  battle_tactics:     { name:'Battle Tactics',        cost:5, eff:'+1 action after winning combat' },
+  cloaking_device:    { name:'Cloaking Device',       cost:6, eff:'AI ships cannot detect you' },
+  warriors_code:      { name:"Warrior's Code",        cost:4, eff:'+2 Ascendancy per combat win' },
+  tal_shiar:          { name:'Tal Shiar Intel',       cost:5, eff:'See all AI resource totals' },
+  singularity_core:   { name:'Singularity Core',     cost:6, eff:'+2 Production per turn' },
+  deception_protocol: { name:'Deception Protocol',   cost:4, eff:'+2 Influence attack' },
+};
+
+const SYS = [
+  { id:'sol',       name:'Sol',         x:170, y:180, type:'home',       p:3, r:3, i:3 },
+  { id:'qonos',     name:"Qo'noS",      x:590, y:130, type:'home',       p:3, r:2, i:2 },
+  { id:'romulus',   name:'Romulus',     x:610, y:420, type:'home',       p:2, r:2, i:4 },
+  { id:'vulcan',    name:'Vulcan',      x:255, y:110, type:'scientific', p:1, r:4, i:2 },
+  { id:'andor',     name:'Andor',       x:130, y:290, type:'industrial', p:4, r:1, i:1 },
+  { id:'betazed',   name:'Betazed',     x:305, y:265, type:'strategic',  p:2, r:2, i:3 },
+  { id:'cardassia', name:'Cardassia',   x:400, y:340, type:'industrial', p:3, r:1, i:2 },
+  { id:'bajor',     name:'Bajor',       x:465, y:270, type:'strategic',  p:2, r:2, i:3 },
+  { id:'ferengi',   name:'Ferengi',     x:335, y:170, type:'commercial', p:2, r:2, i:2 },
+  { id:'talos',     name:'Talos IV',    x:195, y:390, type:'mysterious', p:1, r:3, i:4 },
+  { id:'rura',      name:'Rura Penthe', x:510, y:65,  type:'industrial', p:4, r:1, i:1 },
+  { id:'neutral',   name:'Neutral Zone',x:395, y:190, type:'strategic',  p:2, r:2, i:2 },
+  { id:'ds9',       name:'DS9 Sector',  x:460, y:390, type:'strategic',  p:2, r:2, i:3 },
+  { id:'genesis',   name:'Genesis',     x:275, y:360, type:'scientific', p:1, r:5, i:1 },
+  { id:'veridian',  name:'Veridian III',x:500, y:470, type:'mysterious', p:1, r:3, i:3 },
 ];
 
-// ── Space Map ─────────────────────────────────────────────
-const MAP_W = 170, MAP_H = 460;
-const CX = MAP_W / 2, CY = MAP_H / 2;
+const LANES = [
+  ['sol','vulcan'],['sol','andor'],['sol','betazed'],['sol','ferengi'],
+  ['vulcan','ferengi'],['vulcan','rura'],
+  ['andor','talos'],['andor','genesis'],
+  ['betazed','cardassia'],['betazed','ferengi'],['betazed','bajor'],
+  ['ferengi','neutral'],['neutral','bajor'],['neutral','qonos'],['neutral','rura'],
+  ['bajor','cardassia'],['bajor','ds9'],
+  ['cardassia','ds9'],['cardassia','genesis'],
+  ['qonos','rura'],['qonos','romulus'],
+  ['romulus','ds9'],['romulus','veridian'],
+  ['ds9','veridian'],['talos','genesis'],
+];
 
-// Generate fixed star field
-const STARS = Array.from({length: 70}, () => ({
-  x: Math.random() * MAP_W,
-  y: Math.random() * MAP_H,
-  r: Math.random() * 1.2 + 0.3,
-  b: Math.random() * 0.6 + 0.4,
-}));
+const AI_PAIR = { federation:['klingon','romulan'], klingon:['federation','romulan'], romulan:['federation','klingon'] };
 
-let mapAnimFrame = null;
-let mapThreats = [];   // {x,y,vx,vy,color,shape,label,active}
-let mapTick = 0;
+// ═══════════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════════
+let G;
 
-function drawShip(ctx, x, y, color, scale=1) {
-  ctx.save();
-  ctx.translate(x, y);
-  ctx.scale(scale, scale);
-  ctx.beginPath();
-  // saucer
-  ctx.ellipse(0, -4, 9, 4, 0, 0, Math.PI * 2);
-  ctx.strokeStyle = color;
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
-  // hull
-  ctx.beginPath();
-  ctx.moveTo(0, 0); ctx.lineTo(0, 12);
-  ctx.lineWidth = 2;
-  ctx.stroke();
-  // nacelles
-  ctx.beginPath();
-  ctx.moveTo(-6, 4); ctx.lineTo(-10, 12);
-  ctx.moveTo(6, 4);  ctx.lineTo(10, 12);
-  ctx.lineWidth = 1.2;
-  ctx.stroke();
-  // nacelle pods
-  ctx.beginPath();
-  ctx.ellipse(-10, 13, 3, 1.5, 0, 0, Math.PI * 2);
-  ctx.ellipse( 10, 13, 3, 1.5, 0, 0, Math.PI * 2);
-  ctx.fillStyle = color;
-  ctx.fill();
-  ctx.restore();
+function newGame(civKey) {
+  const civ = CIVS[civKey];
+  G = {
+    civ: civKey,
+    turn: 1,
+    acts: civ.actions,
+    phase: 'player',
+    res: { p: 8, r: 6, i: 6, a: 0 },
+    techs: { warp_drive: true },
+    sys: {},
+    ships: [],
+    sid: 1,
+    sel: null,
+    moving: false,
+    ended: false,
+    stars: genStars(),
+  };
+  SYS.forEach(s => {
+    G.sys[s.id] = { owner: null, explored: false, ships: [] };
+  });
+  // Home systems
+  G.sys[civ.home].owner = civKey;
+  G.sys[civ.home].explored = true;
+  AI_PAIR[civKey].forEach(ai => {
+    G.sys[CIVS[ai].home].owner = ai;
+    G.sys[CIVS[ai].home].explored = true;
+  });
+  // Starting ships
+  mkShip(civKey, 'command', civ.home);
+  mkShip(civKey, 'scout', civ.home);
+  AI_PAIR[civKey].forEach(ai => { mkShip(ai, 'command', CIVS[ai].home); });
+
+  log(`${civ.name} begins its campaign for galactic Ascendancy.`, 'ev');
+  log('Home system secured. Warp Drive online. Explore and expand!', 'dis');
 }
 
-function drawMap() {
-  const canvas = document.getElementById('map-canvas');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  mapTick++;
+function genStars() {
+  const out = [];
+  for (let i = 0; i < 90; i++) out.push([Math.random()*800, Math.random()*560, Math.random()*1.5+0.3, Math.random()*0.6+0.2]);
+  return out;
+}
 
-  ctx.clearRect(0, 0, MAP_W, MAP_H);
+function mkShip(owner, type, sysId) {
+  const s = { id: G.sid++, owner, type, loc: sysId };
+  G.ships.push(s);
+  G.sys[sysId].ships.push(s.id);
+  return s;
+}
+
+// ═══════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════
+function civColor(k) { return CIVS[k]?.color || '#888'; }
+function sysData(id) { return SYS.find(s => s.id === id); }
+function adjacent(id) {
+  const a = [];
+  LANES.forEach(([x,y]) => { if (x===id) a.push(y); if (y===id) a.push(x); });
+  return a;
+}
+function myShipAt(sysId) { return G.ships.find(s => s.loc === sysId && s.owner === G.civ); }
+function selSys()  { return G.sel?.type === 'system' ? G.sel.id : null; }
+function selShip() { return G.sel?.type === 'ship'   ? G.sel.id : null; }
+function getShip(id) { return G.ships.find(s => s.id === id); }
+
+// ═══════════════════════════════════════════════════════════
+// RENDERING
+// ═══════════════════════════════════════════════════════════
+function render() {
+  renderMap();
+  renderSidebar();
+  renderTopBar();
+  renderActions();
+}
+
+function svgEl(tag, attrs) {
+  const el = document.createElementNS('http://www.w3.org/2000/svg', tag);
+  Object.entries(attrs).forEach(([k,v]) => el.setAttribute(k, v));
+  return el;
+}
+
+function renderMap() {
+  const svg = document.getElementById('galaxy-map');
+  svg.innerHTML = '';
 
   // Stars
-  STARS.forEach(s => {
-    const twinkle = s.b + Math.sin(mapTick * 0.03 + s.x) * 0.15;
-    ctx.beginPath();
-    ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(255,255,255,${twinkle})`;
-    ctx.fill();
+  G.stars.forEach(([x,y,r,o]) => {
+    svg.appendChild(svgEl('circle', {cx:x, cy:y, r, fill:'white', opacity:o}));
   });
 
-  // Grid rings
-  ctx.strokeStyle = 'rgba(255,153,0,0.08)';
-  ctx.lineWidth = 1;
-  [40, 80, 120].forEach(r => {
-    ctx.beginPath();
-    ctx.arc(CX, CY, r, 0, Math.PI * 2);
-    ctx.stroke();
+  // Lanes
+  LANES.forEach(([a,b]) => {
+    const sa = sysData(a), sb = sysData(b);
+    svg.appendChild(svgEl('line', {x1:sa.x, y1:sa.y, x2:sb.x, y2:sb.y, class:'lane'}));
   });
-  // Crosshair
-  ctx.strokeStyle = 'rgba(255,153,0,0.06)';
-  ctx.beginPath();
-  ctx.moveTo(CX, 0); ctx.lineTo(CX, MAP_H);
-  ctx.moveTo(0, CY); ctx.lineTo(MAP_W, CY);
-  ctx.stroke();
 
-  // Threats
-  mapThreats.forEach(t => {
-    if (!t.active) return;
-    // Move
-    t.x += t.vx; t.y += t.vy;
-    // Bounce at edges
-    if (t.x < 10 || t.x > MAP_W - 10) t.vx *= -1;
-    if (t.y < 10 || t.y > MAP_H - 10) t.vy *= -1;
+  // Systems
+  SYS.forEach(sd => {
+    const st = G.sys[sd.id];
+    const isHome = sd.type === 'home';
+    const r = isHome ? 14 : 10;
+    const isSel = G.sel?.type === 'system' && G.sel.id === sd.id;
+    const isMoveTarget = G.moving && G.sel?.type === 'ship' && adjacent(getShip(G.sel.id)?.loc||'').includes(sd.id);
 
-    if (t.shape === 'ship') {
-      drawShip(ctx, t.x, t.y, t.color, 0.7);
-    } else if (t.shape === 'rift') {
-      const pulse = 1 + Math.sin(mapTick * 0.05) * 0.2;
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 18 * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = t.color;
-      ctx.lineWidth = 2;
-      ctx.stroke();
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 9 * pulse, 0, Math.PI * 2);
-      ctx.strokeStyle = t.color;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = 0.5;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
-    } else if (t.shape === 'blip') {
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = t.color;
-      ctx.fill();
-      // ping ring
-      const ping = ((mapTick * 2) % 40) / 40;
-      ctx.beginPath();
-      ctx.arc(t.x, t.y, 4 + ping * 12, 0, Math.PI * 2);
-      ctx.strokeStyle = t.color;
-      ctx.lineWidth = 1;
-      ctx.globalAlpha = 1 - ping;
-      ctx.stroke();
-      ctx.globalAlpha = 1;
+    const g = svgEl('g', { class:'sys-node', transform:`translate(${sd.x},${sd.y})` });
+    g.onclick = () => clickSystem(sd.id);
+
+    const fillColor = st.explored ? (st.owner ? civColor(st.owner) : '#2a3a4a') : '#0d1520';
+    const strokeColor = isMoveTarget ? '#ffff00' : isSel ? '#ffffff' : (st.owner ? civColor(st.owner) : '#2a4a5a');
+    const strokeW = (isSel || isMoveTarget) ? 3 : 2;
+
+    // Ownership ring
+    if (st.owner) {
+      g.appendChild(svgEl('circle', { r: r+6, fill:'none', stroke: civColor(st.owner), 'stroke-width':'1', opacity:'0.4' }));
+    }
+    // Move highlight pulse
+    if (isMoveTarget) {
+      g.appendChild(svgEl('circle', { r: r+4, fill:'rgba(255,255,0,0.08)', stroke:'#ffff00', 'stroke-width':'1', 'stroke-dasharray':'3,2' }));
     }
 
-    // Label
-    ctx.fillStyle = t.color;
-    ctx.font = '8px Share Tech Mono, monospace';
-    ctx.fillText(t.label, t.x + 7, t.y - 7);
-  });
+    g.appendChild(svgEl('circle', { class:'sys-ring', r, fill: fillColor, stroke: strokeColor, 'stroke-width': strokeW }));
 
-  // Player ship (always center)
-  // Shield glow
-  const shieldAlpha = state.shields / 100 * 0.4;
-  const shieldColor = state.shields > 70 ? '85,153,255' :
-                      state.shields > 30 ? '255,153,0' : '255,68,68';
-  const glowR = 18 + Math.sin(mapTick * 0.04) * 2;
-  const grad = ctx.createRadialGradient(CX, CY, 0, CX, CY, glowR);
-  grad.addColorStop(0, `rgba(${shieldColor},${shieldAlpha})`);
-  grad.addColorStop(1, `rgba(${shieldColor},0)`);
-  ctx.beginPath();
-  ctx.arc(CX, CY, glowR, 0, Math.PI * 2);
-  ctx.fillStyle = grad;
-  ctx.fill();
-
-  drawShip(ctx, CX, CY, '#5599ff', 1);
-
-  // "MIIRR" label
-  ctx.fillStyle = '#5599ff';
-  ctx.font = 'bold 8px Share Tech Mono, monospace';
-  ctx.fillText('MIIRR', CX + 14, CY - 2);
-
-  mapAnimFrame = requestAnimationFrame(drawMap);
-}
-
-function setMissionThreats(missionIdx) {
-  mapThreats = [];
-  if (missionIdx === 0) {
-    // Klingon warbird — close and menacing
-    mapThreats.push({x: CX + 55, y: CY - 30, vx: -0.3, vy: 0.2, color: '#ff4444', shape: 'ship', label: 'KLINGON', active: true});
-  } else if (missionIdx === 1) {
-    // Spatial rift — pulsing, drifting
-    mapThreats.push({x: CX - 50, y: CY + 20, vx: 0.1, vy: -0.1, color: '#cc44ff', shape: 'rift', label: 'RIFT', active: true});
-  } else if (missionIdx === 2) {
-    // Unknown vessel — approaching slowly
-    mapThreats.push({x: CX + 60, y: CY - 60, vx: -0.2, vy: 0.15, color: '#44ff88', shape: 'ship', label: 'UNKNOWN', active: true});
-  } else if (missionIdx === 3) {
-    // Three pirate blips surrounding player
-    mapThreats.push({x: CX - 60, y: CY - 50, vx:  0.25, vy:  0.2,  color: '#ff9900', shape: 'blip', label: 'PIRATE', active: true});
-    mapThreats.push({x: CX + 65, y: CY + 40, vx: -0.2,  vy: -0.15, color: '#ff9900', shape: 'blip', label: 'PIRATE', active: true});
-    mapThreats.push({x: CX - 20, y: CY + 70, vx:  0.15, vy: -0.25, color: '#ff9900', shape: 'blip', label: 'PIRATE', active: true});
-  }
-}
-
-function clearThreats() {
-  mapThreats.forEach(t => t.active = false);
-}
-
-function clamp(v) { return Math.max(0, Math.min(100, v)); }
-
-function setBar(id, val) {
-  document.getElementById(id).style.width = clamp(val) + '%';
-}
-
-function log(text, cls='') {
-  const div = document.getElementById('log');
-  const p = document.createElement('p');
-  if (cls) p.className = cls;
-  p.textContent = text;
-  div.appendChild(p);
-  div.scrollTop = div.scrollHeight;
-}
-
-function updateStats() {
-  setBar('bar-shields', state.shields);
-  setBar('bar-hull',    state.hull);
-  setBar('bar-crew',    state.crew);
-  document.getElementById('score').textContent = state.score;
-  document.getElementById('mission-count').textContent =
-    state.mission < missions.length ? `${state.mission + 1} / ${missions.length}` : 'COMPLETE';
-}
-
-function renderChoices(choices, onPick) {
-  const box = document.getElementById('choices');
-  box.innerHTML = '<div class="choices-label">CAPTAIN\'S OPTIONS</div>';
-  choices.forEach((c, i) => {
-    const btn = document.createElement('button');
-    btn.textContent = c.label;
-    if (c.style) btn.classList.add(c.style);
-    btn.onclick = () => { disableAll(); onPick(i); };
-    box.appendChild(btn);
-  });
-}
-
-function disableAll() {
-  document.querySelectorAll('#choices button').forEach(b => b.disabled = true);
-}
-
-function showMission(idx) {
-  if (idx >= missions.length) { endGame(); return; }
-  const m = missions[idx];
-  document.getElementById('stardate').textContent = `STARDATE ${m.stardate} · WARP 6 · TERRAN EMPIRE`;
-  document.getElementById('scene-title').textContent = m.title;
-  setMissionThreats(idx);
-  m.intro.forEach(l => log(l.text, l.cls));
-  renderChoices(m.choices, (pick) => {
-    const c = m.choices[pick];
-    log('> ' + c.label, 'system');
-    setTimeout(() => {
-      log(c.outcome.text, c.outcome.cls);
-      const d = c.delta;
-      state.shields = clamp(state.shields + d.shields);
-      state.hull    = clamp(state.hull    + d.hull);
-      state.crew    = clamp(state.crew    + d.crew);
-      state.score  += d.score;
-      updateStats();
-      clearThreats();
-      if (state.hull <= 0) { setTimeout(shipDestroyed, 800); return; }
-      setTimeout(() => {
-        state.mission++;
-        if (state.mission < missions.length) {
-          log('─'.repeat(40), 'system');
-          log('New mission incoming...', 'info');
-          setTimeout(() => showMission(state.mission), 1000);
-        } else {
-          setTimeout(endGame, 800);
-        }
-      }, 1800);
-    }, 600);
-  });
-}
-
-function shipDestroyed() {
-  document.getElementById('scene-title').textContent = 'SHIP DESTROYED';
-  log('═'.repeat(40), 'bad');
-  log('HULL INTEGRITY LOST. ISS MIIRR DESTROYED.', 'bad');
-  log('The Emperor has already forgotten your name.', 'bad');
-  log(`Final score: ${state.score}`, 'system');
-  renderChoices([{label:'⟳ Try again'}], () => location.reload());
-}
-
-function endGame() {
-  document.getElementById('scene-title').textContent = 'MISSION COMPLETE';
-  log('═'.repeat(40), 'good');
-  let rank, cls;
-  if      (state.score >= 150) { rank = 'GRAND ADMIRAL — The Emperor\'s favored instrument. Your name is feared across the quadrant.'; cls = 'good'; }
-  else if (state.score >= 100) { rank = 'COMMODORE — Brutal, effective, and still alive. The Empire is pleased.';                     cls = 'good'; }
-  else if (state.score >= 50)  { rank = 'CAPTAIN — You survived. In the Terran Empire, that alone is an achievement.';               cls = 'info'; }
-  else                         { rank = 'ENSIGN — The Emperor is displeased. Sleep with one eye open.';                               cls = 'bad';  }
-  log('All situations concluded.', 'system');
-  log(`Final score: ${state.score}`, 'alert');
-  log(`Imperial rating: ${rank}`, cls);
-  log('Long live the Terran Empire.', 'good');
-  renderChoices([{label:'⟳ Play again'}], () => location.reload());
-}
-
-// ── Splash / Intro ────────────────────────────────────────
-function playFanfare() {
-  const ctx = getCtx();
-  // Classic Trek-style ascending fanfare: D4 A4 D5 F#5 A5
-  const notes = [
-    {f: 293.66, t: 0.00, dur: 0.18},
-    {f: 440.00, t: 0.16, dur: 0.18},
-    {f: 587.33, t: 0.32, dur: 0.22},
-    {f: 739.99, t: 0.52, dur: 0.22},
-    {f: 880.00, t: 0.72, dur: 0.50},
-    {f: 587.33, t: 0.72, dur: 0.50},  // harmony
-  ];
-  notes.forEach(({f, t, dur}) => {
-    const o = ctx.createOscillator();
-    const g = ctx.createGain();
-    const rev = ctx.createGain(); // fake reverb tail
-    o.type = 'triangle';
-    o.frequency.value = f;
-    g.gain.setValueAtTime(0, ctx.currentTime + t);
-    g.gain.linearRampToValueAtTime(0.22, ctx.currentTime + t + 0.04);
-    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + dur + 0.3);
-    o.connect(g); g.connect(ctx.destination);
-    o.start(ctx.currentTime + t);
-    o.stop(ctx.currentTime + t + dur + 0.35);
-  });
-}
-
-function dismissSplash() {
-  const splash = document.getElementById('splash');
-  if (!splash || splash.classList.contains('fade-out')) return;
-  if (!muted) playFanfare();
-  splash.classList.add('fade-out');
-  setTimeout(() => { splash.remove(); startBackground(); drawMap(); }, 1300);
-  document.removeEventListener('keydown', dismissSplash);
-  document.removeEventListener('click', dismissSplash);
-}
-
-document.addEventListener('keydown', dismissSplash);
-document.addEventListener('click', e => {
-  if (e.target.id === 'splash' || e.target.closest('#splash')) dismissSplash();
-});
-
-// ── Sound Engine ──────────────────────────────────────────
-let audioCtx = null;
-let muted = false;
-let bgNodes = [];
-let bgStarted = false;
-
-function getCtx() {
-  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  return audioCtx;
-}
-
-function toggleMute() {
-  muted = !muted;
-  document.getElementById('mute-btn').textContent = muted ? '🔇 MUTED' : '🔊 SOUND';
-  bgNodes.forEach(n => { if (n.gain) n.gain.value = muted ? 0 : n._vol; });
-}
-
-function startBackground() {
-  if (bgStarted) return;
-  bgStarted = true;
-  const ctx = getCtx();
-  function makeLayer(freq, detune, vol) {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = 'sine';
-    osc.frequency.value = freq;
-    osc.detune.value = detune;
-    gain.gain.value = muted ? 0 : vol;
-    gain._vol = vol;
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-    osc.start();
-    bgNodes.push(gain);
-  }
-  makeLayer(48,  0, 0.06);
-  makeLayer(48, 12, 0.04);
-  const warp = ctx.createOscillator();
-  const warpGain = ctx.createGain();
-  const lfo = ctx.createOscillator();
-  const lfoGain = ctx.createGain();
-  warp.type = 'sine';
-  warp.frequency.value = 110;
-  warpGain.gain.value = muted ? 0 : 0.025;
-  warpGain._vol = 0.025;
-  lfo.frequency.value = 0.07;
-  lfoGain.gain.value = 8;
-  lfo.connect(lfoGain);
-  lfoGain.connect(warp.frequency);
-  warp.connect(warpGain);
-  warpGain.connect(ctx.destination);
-  lfo.start(); warp.start();
-  bgNodes.push(warpGain);
-  function randomChime() {
-    if (!muted) {
-      const c = getCtx();
-      const f = [523,659,784,1047,1319][Math.floor(Math.random()*5)];
-      const o = c.createOscillator();
-      const g = c.createGain();
-      o.type = 'sine';
-      o.frequency.value = f;
-      g.gain.setValueAtTime(0, c.currentTime);
-      g.gain.linearRampToValueAtTime(0.04, c.currentTime + 0.05);
-      g.gain.exponentialRampToValueAtTime(0.001, c.currentTime + 1.2);
-      o.connect(g); g.connect(c.destination);
-      o.start(); o.stop(c.currentTime + 1.2);
+    if (st.explored) {
+      const t = svgEl('text', { class:'sys-label', x:0, y: r+11, 'text-anchor':'middle' });
+      t.textContent = sd.name;
+      g.appendChild(t);
+    } else {
+      const q = svgEl('text', { class:'sys-unk', x:0, y:4, 'text-anchor':'middle' });
+      q.textContent = '?';
+      g.appendChild(q);
     }
-    setTimeout(randomChime, 4000 + Math.random() * 8000);
+
+    svg.appendChild(g);
+  });
+
+  // Ships (drawn after systems so they appear on top)
+  SYS.forEach(sd => {
+    const shipsHere = G.ships.filter(s => s.loc === sd.id);
+    shipsHere.forEach((ship, i) => {
+      const angle = (i / Math.max(shipsHere.length, 1)) * Math.PI * 2 - Math.PI/2;
+      const dist = (sd.type==='home' ? 14 : 10) + 10;
+      const cx = sd.x + Math.cos(angle)*dist;
+      const cy = sd.y + Math.sin(angle)*dist;
+      const isSel = G.sel?.type === 'ship' && G.sel.id === ship.id;
+      const dot = svgEl('circle', {
+        class: 'ship-dot',
+        cx, cy,
+        r: ship.type === 'command' ? 5 : 3.5,
+        fill: civColor(ship.owner),
+        stroke: isSel ? '#fff' : '#000',
+        'stroke-width': isSel ? 2 : 1,
+      });
+      if (ship.owner === G.civ) dot.onclick = e => { e.stopPropagation(); clickShip(ship.id); };
+      svg.parentElement.appendChild; // no-op
+      svg.appendChild(dot);
+    });
+  });
+}
+
+function renderTopBar() {
+  const civ = CIVS[G.civ];
+  document.getElementById('civ-title').textContent = `${civ.sym} ${civ.short}`;
+  document.getElementById('rp').textContent = G.res.p;
+  document.getElementById('rr').textContent = G.res.r;
+  document.getElementById('ri').textContent = G.res.i;
+  document.getElementById('ra').textContent = G.res.a;
+  document.getElementById('tn').textContent  = G.turn;
+  document.getElementById('acts-left').textContent = G.acts;
+}
+
+function renderSidebar() {
+  // Selected panel
+  const sp = document.getElementById('sel-panel');
+  if (!G.sel) {
+    sp.textContent = 'Nothing selected';
+  } else if (G.sel.type === 'system') {
+    const sd = sysData(G.sel.id), st = G.sys[G.sel.id];
+    const owner = st.owner ? CIVS[st.owner]?.short || st.owner : 'Unclaimed';
+    sp.innerHTML = `<b style="color:${st.owner?civColor(st.owner):'#aaa'}">${sd.name}</b><br>
+    Type: ${sd.type}<br>Owner: ${owner}<br>
+    ${st.explored ? `⚙${sd.p} &nbsp;🔬${sd.r} &nbsp;◈${sd.i}` : '<i style="color:#555">Unexplored</i>'}`;
+  } else if (G.sel.type === 'ship') {
+    const sh = getShip(G.sel.id);
+    if (sh) {
+      const loc = sysData(sh.loc)?.name || sh.loc;
+      sp.innerHTML = `<b>Ship #${sh.id}</b> (${sh.type})<br>
+      Owner: ${CIVS[sh.owner]?.short || sh.owner}<br>
+      Location: ${loc}<br>
+      ${G.moving ? '<span style="color:#ffdd00">⇒ Click destination system</span>' : ''}`;
+    }
   }
-  setTimeout(randomChime, 3000);
+
+  // Galaxy panel
+  const gp = document.getElementById('galaxy-panel');
+  const factions = [G.civ, ...AI_PAIR[G.civ]];
+  let html = '';
+  factions.forEach(f => {
+    const count = Object.values(G.sys).filter(s => s.owner === f).length;
+    html += `<div style="color:${civColor(f)}">${CIVS[f].sym} ${CIVS[f].short}: ${count} systems</div>`;
+  });
+  const unk = Object.values(G.sys).filter(s => !s.explored).length;
+  html += `<div style="color:#2a4050">? Unknown: ${unk}</div>`;
+  gp.innerHTML = html;
+
+  // Phase
+  document.getElementById('phase-info').textContent = G.phase === 'player' ? 'Player Turn' : G.phase === 'ai' ? 'AI Turn…' : 'Game Over';
+  document.getElementById('sel-info').textContent = G.sel
+    ? (G.sel.type === 'system' ? `System: ${sysData(G.sel.id)?.name}` : `Ship #${G.sel.id}`)
+    : 'Click a system or ship';
 }
 
-function playHover() {
-  if (muted) return;
-  const ctx = getCtx();
-  const o = ctx.createOscillator();
-  const g = ctx.createGain();
-  o.type = 'sine';
-  o.frequency.setValueAtTime(1400, ctx.currentTime);
-  o.frequency.exponentialRampToValueAtTime(1100, ctx.currentTime + 0.06);
-  g.gain.setValueAtTime(0.12, ctx.currentTime);
-  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.07);
-  o.connect(g); g.connect(ctx.destination);
-  o.start(); o.stop(ctx.currentTime + 0.07);
+function renderActions() {
+  const hasSys  = G.sel?.type === 'system';
+  const hasShip = G.sel?.type === 'ship';
+  const st      = hasSys ? G.sys[G.sel.id] : null;
+  const acts    = G.acts > 0 && G.phase === 'player' && !G.ended;
+
+  const shipAtSys   = hasSys ? myShipAt(G.sel.id) : null;
+  const myShipSel   = hasShip && getShip(G.sel.id)?.owner === G.civ;
+
+  document.getElementById('btn-explore').disabled   = !(acts && hasSys && shipAtSys && !st.explored);
+  document.getElementById('btn-colonize').disabled  = !(acts && hasSys && shipAtSys && st.explored && !st.owner);
+  document.getElementById('btn-move').disabled      = !(acts && myShipSel) && !G.moving;
+  document.getElementById('btn-build').disabled     = !(acts && hasSys && st?.owner === G.civ && G.res.p >= 3);
+  document.getElementById('btn-research').disabled  = !(acts && G.res.r >= 4);
+
+  const mb = document.getElementById('btn-move');
+  if (G.moving) {
+    mb.textContent = '❌ Cancel Move';
+    mb.className = 'action-btn cancel';
+    mb.onclick = cancelMove;
+    mb.disabled = false;
+  } else {
+    mb.textContent = '🚀 Move Ship';
+    mb.className = 'action-btn';
+    mb.onclick = doMove;
+  }
 }
 
-function playClick() {
-  if (muted) return;
-  const ctx = getCtx();
-  const o1 = ctx.createOscillator();
-  const g1 = ctx.createGain();
-  o1.type = 'square';
-  o1.frequency.value = 660;
-  g1.gain.setValueAtTime(0.15, ctx.currentTime);
-  g1.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.09);
-  o1.connect(g1); g1.connect(ctx.destination);
-  o1.start(); o1.stop(ctx.currentTime + 0.09);
-  const o2 = ctx.createOscillator();
-  const g2 = ctx.createGain();
-  o2.type = 'square';
-  o2.frequency.value = 990;
-  g2.gain.setValueAtTime(0, ctx.currentTime + 0.08);
-  g2.gain.linearRampToValueAtTime(0.15, ctx.currentTime + 0.10);
-  g2.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.22);
-  o2.connect(g2); g2.connect(ctx.destination);
-  o2.start(ctx.currentTime + 0.08);
-  o2.stop(ctx.currentTime + 0.22);
+// ═══════════════════════════════════════════════════════════
+// SELECTION
+// ═══════════════════════════════════════════════════════════
+function clickSystem(id) {
+  if (G.ended) return;
+  if (G.moving && G.sel?.type === 'ship') {
+    const sh = getShip(G.sel.id);
+    if (sh && adjacent(sh.loc).includes(id)) { execMove(sh.id, id); return; }
+    else { log('Cannot reach that system — not adjacent.', 'ev'); return; }
+  }
+  G.sel = { type:'system', id };
+  render();
 }
 
-document.addEventListener('mouseenter', e => {
-  if (e.target.tagName === 'BUTTON' && !e.target.disabled) { startBackground(); playHover(); }
-}, true);
-document.addEventListener('click', e => {
-  if (e.target.tagName === 'BUTTON' && !e.target.disabled) playClick();
-}, true);
+function clickShip(id) {
+  if (G.ended || G.phase !== 'player') return;
+  G.moving = false;
+  G.sel = { type:'ship', id };
+  render();
+}
 
-updateStats();
-setTimeout(() => showMission(0), 500);
-drawMap();
+// ═══════════════════════════════════════════════════════════
+// ACTIONS
+// ═══════════════════════════════════════════════════════════
+function doExplore() {
+  const id = selSys(); if (!id) return;
+  const st = G.sys[id], sd = sysData(id);
+  if (st.explored || !myShipAt(id)) return;
+  st.explored = true;
+  spendAct();
+  log(`Explored ${sd.name} — ⚙${sd.p} 🔬${sd.r} ◈${sd.i} [${sd.type}]`, 'dis');
+  if (G.techs['advanced_sensors']) {
+    adjacent(id).forEach(adj => {
+      if (!G.sys[adj].explored) {
+        G.sys[adj].explored = true;
+        log(`Advanced sensors: ${sysData(adj).name} revealed.`, 'dis');
+      }
+    });
+  }
+  render();
+}
+
+function doColonize() {
+  const id = selSys(); if (!id) return;
+  const st = G.sys[id], sd = sysData(id);
+  if (!st.explored || st.owner || !myShipAt(id)) return;
+  st.owner = G.civ;
+  G.res.a += 1;
+  spendAct();
+  log(`Colonized ${sd.name}! Ascendancy +1 (${G.res.a}/20)`, 'ev');
+  checkVictory();
+  render();
+}
+
+function doMove() {
+  if (!G.sel || G.sel.type !== 'ship') { log('Select one of your ships first.', 'ev'); return; }
+  G.moving = true;
+  log('Moving — click an adjacent system (highlighted).', 'ev');
+  render();
+}
+
+function cancelMove() { G.moving = false; render(); }
+
+function execMove(shipId, destId) {
+  const sh = getShip(shipId);
+  if (!sh) return;
+  G.sys[sh.loc].ships = G.sys[sh.loc].ships.filter(x => x !== shipId);
+  sh.loc = destId;
+  G.sys[destId].ships.push(shipId);
+  G.moving = false;
+  G.sel = { type:'ship', id: shipId };
+  spendAct();
+  log(`Ship #${shipId} moved to ${sysData(destId)?.name}.`, 'ev');
+  const enemies = G.ships.filter(s => s.loc === destId && s.owner !== G.civ);
+  if (enemies.length) combat(G.civ, enemies[0].owner, destId);
+  render();
+}
+
+function doBuild() {
+  const id = selSys(); if (!id) return;
+  if (G.sys[id].owner !== G.civ || G.res.p < 3) return;
+  G.res.p -= 3;
+  mkShip(G.civ, 'scout', id);
+  spendAct();
+  log(`New scout ship built at ${sysData(id)?.name}.`, 'ev');
+  render();
+}
+
+function doResearch() {
+  if (G.res.r < 4) return;
+  const avail = CIVS[G.civ].techs.filter(t => !G.techs[t]);
+  if (!avail.length) { log('All technologies researched!', 'ev'); return; }
+  showTechModal(avail);
+}
+
+function showTechModal(avail) {
+  const btns = document.getElementById('modal-btns');
+  btns.innerHTML = '';
+  avail.forEach(tid => {
+    const td = TECH[tid];
+    const b = document.createElement('button');
+    b.className = 'm-btn tech-btn';
+    b.disabled = G.res.r < td.cost;
+    b.textContent = `${td.name} (${td.cost}🔬) — ${td.eff}`;
+    b.onclick = () => {
+      if (G.res.r < td.cost) return;
+      G.res.r -= td.cost;
+      G.techs[tid] = true;
+      applyTech(tid);
+      spendAct();
+      log(`Research complete: ${td.name}`, 'dis');
+      closeModal();
+      render();
+    };
+    btns.appendChild(b);
+  });
+  const c = document.createElement('button');
+  c.className = 'm-btn'; c.textContent = 'Cancel'; c.onclick = closeModal;
+  btns.appendChild(c);
+  openModal('Research Technology', `Available research 🔬${G.res.r}`);
+}
+
+function applyTech(tid) {
+  if (tid === 'diplomacy_corps')  G.res.i += 2;
+  if (tid === 'replicators')      G.res.p += 2;
+  if (tid === 'singularity_core') G.res.p += 3;
+}
+
+function spendAct() {
+  G.acts--;
+  if (G.acts <= 0) log('No actions remaining — end your turn.', 'ev');
+}
+
+// ═══════════════════════════════════════════════════════════
+// COMBAT
+// ═══════════════════════════════════════════════════════════
+function combat(attacker, defender, sysId) {
+  const ac = CIVS[attacker], dc = CIVS[defender];
+  let ar = roll6() + ac.com + (attacker===G.civ && G.techs['disruptors'] ? 2 : 0);
+  let dr = roll6() + dc.com + (defender===G.civ && G.techs['deflector_shields'] ? 1 : 0);
+  const name = sysData(sysId)?.name;
+  log(`⚔ COMBAT at ${name}: ${ac.short}[${ar}] vs ${dc.short}[${dr}]`, 'cbt');
+
+  const winner = ar > dr ? attacker : defender;
+  const loser  = ar > dr ? defender : attacker;
+
+  const losShip = G.ships.find(s => s.loc === sysId && s.owner === loser);
+  if (losShip) {
+    G.ships = G.ships.filter(s => s.id !== losShip.id);
+    G.sys[sysId].ships = G.sys[sysId].ships.filter(x => x !== losShip.id);
+    log(`${CIVS[winner].short} wins — enemy ship destroyed.`, 'cbt');
+    if (winner === G.civ) {
+      const bonus = G.techs['warriors_code'] ? 3 : 1;
+      G.res.a += bonus;
+      log(`Ascendancy +${bonus} from victory! (${G.res.a}/20)`, 'ev');
+      if (G.techs['battle_tactics']) { G.acts++; log('Battle Tactics: +1 bonus action.', 'ev'); }
+    }
+    // Capture system
+    if (!G.ships.find(s => s.loc === sysId && s.owner === loser) && G.sys[sysId].owner === loser) {
+      G.sys[sysId].owner = winner;
+      log(`${name} captured by ${CIVS[winner].short}!`, 'cbt');
+      if (winner === G.civ) { G.res.a += 2; checkVictory(); }
+    }
+  }
+}
+
+function roll6() { return Math.floor(Math.random()*6)+1; }
+
+// ═══════════════════════════════════════════════════════════
+// AI
+// ═══════════════════════════════════════════════════════════
+function runAI() {
+  AI_PAIR[G.civ].forEach(ai => {
+    const aiShips = G.ships.filter(s => s.owner === ai);
+    if (!aiShips.length) return;
+
+    aiShips.forEach(sh => {
+      const st = G.sys[sh.loc];
+      // Explore
+      if (!st.explored) { st.explored = true; }
+      // Colonize
+      if (st.explored && !st.owner) {
+        st.owner = ai;
+        log(`${CIVS[ai].short} colonizes ${sysData(sh.loc)?.name}.`, 'ev');
+      }
+      // Move toward unclaimed or player territory
+      const adj = adjacent(sh.loc);
+      const pref = adj.find(id => !G.sys[id].owner) || adj.find(id => G.sys[id].owner !== ai) || adj[0];
+      if (pref) {
+        G.sys[sh.loc].ships = G.sys[sh.loc].ships.filter(x => x !== sh.id);
+        sh.loc = pref;
+        G.sys[pref].ships.push(sh.id);
+        if (G.ships.some(s => s.loc === pref && s.owner === G.civ)) combat(ai, G.civ, pref);
+      }
+    });
+
+    // AI build
+    const owned = Object.entries(G.sys).filter(([,s]) => s.owner === ai);
+    if (owned.length >= 2 && Math.random() > 0.65) {
+      const [sid] = owned[Math.floor(Math.random()*owned.length)];
+      mkShip(ai, 'scout', sid);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// TURN / RESOURCES
+// ═══════════════════════════════════════════════════════════
+function collectResources() {
+  const civ = CIVS[G.civ];
+  let p=0, r=0, i=0;
+  Object.entries(G.sys).forEach(([id, st]) => {
+    if (st.owner === G.civ) { const sd = sysData(id); p+=sd.p; r+=sd.r; i+=sd.i; }
+  });
+  if (G.techs['diplomacy_corps'])  i += 1;
+  if (G.techs['replicators'])      p += 1;
+  if (G.techs['singularity_core']) p += 2;
+  p += civ.prod - 2; r += civ.res - 2; i += civ.inf - 2;
+  G.res.p += Math.max(1, p);
+  G.res.r += Math.max(1, r);
+  G.res.i += Math.max(1, i);
+  // Passive ascendancy from control
+  const ctrl = Object.values(G.sys).filter(s => s.owner === G.civ).length;
+  if (ctrl >= 3) { G.res.a += Math.floor(ctrl/3); }
+}
+
+function endTurn() {
+  if (G.phase !== 'player' || G.ended) return;
+  G.phase = 'ai';
+  G.moving = false;
+  log(`── Turn ${G.turn} end. AI factions acting… ──`, 'sep');
+  render();
+  setTimeout(() => {
+    runAI();
+    collectResources();
+    G.turn++;
+    G.acts = CIVS[G.civ].actions;
+    G.phase = 'player';
+    log(`── Turn ${G.turn} begins. Resources collected. ──`, 'sep');
+    checkVictory();
+    render();
+  }, 400);
+}
+
+// ═══════════════════════════════════════════════════════════
+// VICTORY
+// ═══════════════════════════════════════════════════════════
+function checkVictory() {
+  if (G.ended) return;
+  if (G.res.a >= 20) {
+    G.ended = true;
+    setTimeout(() => openModal('✦ ASCENDANCY ACHIEVED ✦',
+      `${CIVS[G.civ].name} has achieved galactic Ascendancy on Turn ${G.turn}! The galaxy recognizes your civilization's supremacy.`), 100);
+    log('VICTORY — Ascendancy achieved!', 'vic');
+    return;
+  }
+  const mine = Object.values(G.sys).filter(s => s.owner === G.civ).length;
+  if (mine >= 8) {
+    G.ended = true;
+    setTimeout(() => openModal('✦ GALACTIC CONQUEST ✦',
+      `${CIVS[G.civ].name} controls ${mine} star systems! Your empire spans the known galaxy.`), 100);
+    log('VICTORY — Galactic conquest!', 'vic');
+    return;
+  }
+  AI_PAIR[G.civ].forEach(ai => {
+    const aiSys = Object.values(G.sys).filter(s => s.owner === ai).length;
+    if (aiSys >= 8 && !G.ended) {
+      G.ended = true;
+      setTimeout(() => openModal('⚔ DEFEAT',
+        `${CIVS[ai].name} has conquered the galaxy with ${aiSys} systems. Your civilization is swept aside.`), 100);
+    }
+  });
+}
+
+// ═══════════════════════════════════════════════════════════
+// LOG
+// ═══════════════════════════════════════════════════════════
+function log(msg, cls='') {
+  const panel = document.getElementById('log-panel');
+  const d = document.createElement('div');
+  d.className = 'le ' + cls;
+  d.textContent = msg;
+  panel.insertBefore(d, panel.firstChild);
+  while (panel.children.length > 60) panel.removeChild(panel.lastChild);
+}
+
+// ═══════════════════════════════════════════════════════════
+// MODAL
+// ═══════════════════════════════════════════════════════════
+function openModal(title, body) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-body').textContent  = body;
+  const btns = document.getElementById('modal-btns');
+  if (!btns.children.length) {
+    const b = document.createElement('button');
+    b.className = 'm-btn'; b.textContent = 'Continue'; b.onclick = closeModal;
+    btns.appendChild(b);
+  }
+  document.getElementById('modal').classList.add('show');
+}
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  document.getElementById('modal-btns').innerHTML = '';
+}
+
+// ═══════════════════════════════════════════════════════════
+// BOOT
+// ═══════════════════════════════════════════════════════════
+function startGame(civKey) {
+  document.getElementById('civ-select').style.display = 'none';
+  document.getElementById('game').style.display = 'flex';
+  newGame(civKey);
+  render();
+}
 </script>
 </body>
 </html>
