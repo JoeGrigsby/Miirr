@@ -1,0 +1,687 @@
+<title>USS Miirr LCARS</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Antonio:wght@400;500;600;700&family=Share+Tech+Mono&display=swap');
+
+:root{
+  --bg:#000000;
+  --orange:#FF9C00;
+  --tan:#FFCC99;
+  --lilac:#CC99CC;
+  --peri:#9999FF;
+  --red:#CC6666;
+  --ice:#CCCCFF;
+  --text-on-bar:#000000;
+  --data-text:#9999FF;
+  --dim:#5c5c66;
+  --gap:6px;
+}
+
+*{ box-sizing:border-box; }
+html,body{ height:100%; }
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--data-text);
+  font-family:'Share Tech Mono', ui-monospace, monospace;
+  overflow:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,button,.lbl,.bar-label,.pill{
+  font-family:'Antonio', 'Arial Narrow', sans-serif;
+  text-transform:uppercase;
+  letter-spacing:0.03em;
+}
+
+@media (prefers-reduced-motion: reduce){
+  *{ animation-duration:0.001ms !important; animation-iteration-count:1 !important; transition-duration:0.001ms !important; }
+}
+
+/* ---------- overall frame ---------- */
+.lcars{
+  display:grid;
+  grid-template-columns:220px 1fr;
+  grid-template-rows:78px 1fr 46px;
+  grid-template-areas:
+    "corner header"
+    "nav main"
+    "foot foot";
+  gap:var(--gap);
+  height:100vh;
+  padding:var(--gap);
+}
+
+/* corner elbow (top-left) */
+.corner{
+  grid-area:corner;
+  position:relative;
+  background:var(--orange);
+  border-radius:34px 0 0 0;
+}
+.corner::after{
+  content:"";
+  position:absolute; right:0; bottom:0;
+  width:56px; height:40px;
+  background:var(--bg);
+  border-radius:0 0 0 40px;
+}
+
+.header{
+  grid-area:header;
+  display:flex; align-items:center; justify-content:space-between;
+  gap:16px;
+  background:var(--orange);
+  border-radius:0 34px 34px 0;
+  padding:0 34px 0 26px;
+  min-width:0;
+}
+.header .ship{
+  color:var(--text-on-bar);
+  font-size:26px; font-weight:700;
+  white-space:nowrap;
+  overflow:hidden; text-overflow:ellipsis;
+}
+.header .stardate{
+  color:var(--text-on-bar);
+  font-family:'Share Tech Mono',monospace;
+  font-size:15px; font-weight:bold;
+  text-transform:none;
+  white-space:nowrap;
+  letter-spacing:0.05em;
+}
+
+/* nav / sidebar */
+.nav{
+  grid-area:nav;
+  display:flex; flex-direction:column;
+  gap:var(--gap);
+  min-height:0;
+  overflow:hidden;
+}
+.pill{
+  border:none;
+  cursor:pointer;
+  color:var(--text-on-bar);
+  background:var(--tan);
+  border-radius:999px;
+  padding:10px 10px 10px 22px;
+  text-align:right;
+  font-size:16px;
+  font-weight:600;
+  line-height:1.15;
+  transition:filter .12s ease, transform .12s ease;
+}
+.pill small{ display:block; font-family:'Share Tech Mono',monospace; text-transform:none; font-size:10px; font-weight:normal; letter-spacing:0; opacity:.72; }
+.pill:hover{ filter:brightness(1.15); }
+.pill:active{ transform:scale(0.98); }
+.pill:focus-visible{ outline:3px solid var(--ice); outline-offset:2px; }
+.pill.active{ filter:brightness(1.3); box-shadow:inset 0 0 0 3px rgba(0,0,0,.35); }
+
+.pill.c-orange{ background:var(--orange); }
+.pill.c-tan{ background:var(--tan); }
+.pill.c-lilac{ background:var(--lilac); }
+.pill.c-peri{ background:var(--peri); }
+.pill.c-red{ background:var(--red); }
+
+.nav .spacer{ flex:1 1 auto; }
+.nav .filler{
+  background:repeating-linear-gradient(180deg, var(--lilac) 0 18px, var(--bg) 18px 22px);
+  border-radius:999px;
+  flex:0 0 auto;
+  height:56px;
+}
+
+/* main viewport */
+.main{
+  grid-area:main;
+  min-width:0; min-height:0;
+  background:#000;
+  border:2px solid #1a1a22;
+  border-radius:10px;
+  position:relative;
+  overflow:hidden;
+}
+.panel{ display:none; height:100%; padding:18px 22px; flex-direction:column; gap:14px; }
+.panel.active{ display:flex; }
+.panel > .panel-title{
+  color:var(--tan);
+  font-size:22px; font-weight:700;
+  border-bottom:2px solid #2a2a33;
+  padding-bottom:8px;
+  display:flex; justify-content:space-between; align-items:baseline;
+}
+.panel > .panel-title .sub{ font-family:'Share Tech Mono',monospace; text-transform:none; font-size:12px; color:var(--dim); letter-spacing:.05em; }
+
+/* footer */
+.foot{
+  grid-area:foot;
+  background:var(--lilac);
+  border-radius:0 999px 999px 22px;
+  display:flex; align-items:center;
+  padding:0 24px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.foot .ticker{
+  color:var(--text-on-bar);
+  font-family:'Share Tech Mono',monospace;
+  font-size:12px;
+  letter-spacing:.04em;
+  display:inline-block;
+  padding-left:100%;
+  animation:ticker 26s linear infinite;
+}
+@keyframes ticker{ from{transform:translateX(0);} to{transform:translateX(-100%);} }
+
+/* ---------- viewscreen panel ---------- */
+.viewscreen{
+  flex:1; min-height:0;
+  border:1px solid #23232c;
+  border-radius:6px;
+  position:relative;
+  background:radial-gradient(ellipse at 50% 40%, #050510 0%, #000 75%);
+  overflow:hidden;
+}
+.viewscreen canvas{ position:absolute; inset:0; width:100%; height:100%; }
+.viewscreen .boot-log{
+  position:absolute; left:16px; bottom:16px; right:16px;
+  color:var(--orange);
+  font-size:13px;
+  line-height:1.5;
+  text-shadow:0 0 6px rgba(255,156,0,.5);
+  white-space:pre-wrap;
+}
+.cursor{ display:inline-block; width:8px; background:var(--orange); animation:blink 1s steps(1) infinite; }
+@keyframes blink{ 50%{opacity:0;} }
+
+.telemetry-strip{ display:flex; gap:var(--gap); flex-wrap:wrap; }
+.chip{
+  background:#111117; border:1px solid #26262f; border-radius:6px;
+  padding:8px 12px; min-width:110px;
+  font-size:12px;
+}
+.chip .k{ color:var(--dim); letter-spacing:.06em; }
+.chip .v{ color:var(--peri); font-size:15px; font-weight:bold; }
+
+/* ---------- status panel ---------- */
+.status-grid{ display:flex; flex-direction:column; gap:10px; overflow:auto; padding-right:4px; }
+.gauge{ display:grid; grid-template-columns:170px 1fr 70px; align-items:center; gap:12px; }
+.gauge .name{ color:var(--tan); font-size:15px; font-weight:600; }
+.gauge .track{ height:14px; border-radius:7px; background:#15151b; overflow:hidden; }
+.gauge .fill{ height:100%; border-radius:7px; transition:width .5s ease, background-color .3s ease; }
+.gauge .pct{ text-align:right; font-size:13px; }
+.gauge.critical .name{ color:var(--red); }
+.gauge.critical .pct{ color:var(--red); animation:blink .6s steps(1) infinite; }
+
+/* ---------- comms panel ---------- */
+.comm-log{ flex:1; min-height:0; overflow-y:auto; display:flex; flex-direction:column-reverse; gap:10px; padding-right:4px; }
+.comm-entry{ border-left:3px solid var(--peri); padding:4px 0 4px 12px; font-size:13px; }
+.comm-entry .meta{ color:var(--dim); font-size:11px; letter-spacing:.05em; }
+.comm-entry .msg{ color:#d8d8ff; }
+.comm-entry.incoming{ border-left-color:var(--orange); }
+.comm-entry.incoming .msg{ color:var(--tan); }
+
+/* ---------- sensors panel ---------- */
+.sensor-body{ flex:1; min-height:0; display:grid; grid-template-columns:1fr 240px; gap:16px; }
+.radar-wrap{ position:relative; border:1px solid #23232c; border-radius:6px; overflow:hidden; background:#020204; }
+.radar-wrap canvas{ position:absolute; inset:0; width:100%; height:100%; }
+.readout-col{ display:flex; flex-direction:column; gap:8px; }
+
+/* ---------- database panel ---------- */
+.db-stream{
+  flex:1; min-height:0; overflow:hidden; position:relative;
+  border:1px solid #23232c; border-radius:6px; background:#020204;
+  font-size:12.5px; line-height:1.75; padding:10px 14px;
+}
+.db-stream .row{ display:flex; gap:14px; white-space:nowrap; opacity:0; animation:rowin .4s ease forwards; }
+@keyframes rowin{ from{opacity:0; transform:translateY(4px);} to{opacity:1; transform:translateY(0);} }
+.db-stream .tag{ color:var(--orange); width:74px; flex:0 0 auto; }
+.db-stream .code{ color:var(--tan); width:120px; flex:0 0 auto; }
+.db-stream .desc{ color:var(--peri); overflow:hidden; text-overflow:ellipsis; }
+
+/* alert overlay */
+.alert-overlay{
+  position:fixed; inset:0; pointer-events:none;
+  background:radial-gradient(ellipse at center, rgba(204,0,0,0) 55%, rgba(204,0,0,.45) 100%);
+  opacity:0; transition:opacity .3s ease; z-index:50;
+}
+body.alert .alert-overlay{ opacity:1; animation:pulse 1s ease-in-out infinite; }
+@keyframes pulse{ 0%,100%{ opacity:.55; } 50%{ opacity:1; } }
+body.alert .header,body.alert .corner{ animation:redflash 1s steps(2) infinite; }
+@keyframes redflash{ 50%{ background:var(--red); } }
+
+.sr-only{ position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
+</style>
+
+<div class="lcars">
+  <div class="corner"></div>
+
+  <div class="header">
+    <div class="ship">USS Miirr &middot; NCC-1966</div>
+    <div class="stardate" id="stardate">STARDATE 78341.2</div>
+  </div>
+
+  <nav class="nav" aria-label="LCARS system select">
+    <button class="pill c-orange active" data-panel="main">Main Viewer<small>47-A</small></button>
+    <button class="pill c-tan" data-panel="status">Ship Status<small>12-C</small></button>
+    <button class="pill c-lilac" data-panel="comms">Communications<small>09-F</small></button>
+    <button class="pill c-peri" data-panel="sensors">Sensor Array<small>25-D</small></button>
+    <button class="pill c-tan" data-panel="database">Database<small>03-B</small></button>
+    <div class="filler" aria-hidden="true"></div>
+    <div class="spacer"></div>
+    <button class="pill c-peri" id="audioToggle">Audio: On<small>02-K</small></button>
+    <button class="pill c-red" id="alertToggle">Red Alert<small>91-Z</small></button>
+  </nav>
+
+  <main class="main">
+    <section class="panel active" id="panel-main">
+      <div class="panel-title">Main Viewer <span class="sub">FORWARD ARRAY / OPTICAL</span></div>
+      <div class="viewscreen">
+        <canvas id="starfield"></canvas>
+        <div class="boot-log" id="bootLog"></div>
+      </div>
+      <div class="telemetry-strip">
+        <div class="chip"><div class="k">HEADING</div><div class="v" id="tHeading">227 MARK 4</div></div>
+        <div class="chip"><div class="k">VELOCITY</div><div class="v" id="tVelocity">WARP 5.2</div></div>
+        <div class="chip"><div class="k">SECTOR</div><div class="v">21174-C</div></div>
+        <div class="chip"><div class="k">CREW ABOARD</div><div class="v">1,014</div></div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-status">
+      <div class="panel-title">Ship Status <span class="sub">SUBSYSTEM DIAGNOSTIC</span></div>
+      <div class="status-grid" id="statusGrid"></div>
+    </section>
+
+    <section class="panel" id="panel-comms">
+      <div class="panel-title">Communications <span class="sub">HAILING FREQUENCIES OPEN</span></div>
+      <div class="comm-log" id="commLog"></div>
+    </section>
+
+    <section class="panel" id="panel-sensors">
+      <div class="panel-title">Sensor Array <span class="sub">LONG-RANGE SWEEP</span></div>
+      <div class="sensor-body">
+        <div class="radar-wrap"><canvas id="radar"></canvas></div>
+        <div class="readout-col">
+          <div class="chip"><div class="k">BEARING</div><div class="v" id="sBearing">014</div></div>
+          <div class="chip"><div class="k">RANGE</div><div class="v" id="sRange">2.4 LY</div></div>
+          <div class="chip"><div class="k">CONTACTS</div><div class="v" id="sContacts">3</div></div>
+          <div class="chip"><div class="k">RADIATION</div><div class="v" id="sRad">NOMINAL</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-database">
+      <div class="panel-title">Database <span class="sub">STARFLEET RECORDS ACCESS</span></div>
+      <div class="db-stream" id="dbStream"></div>
+    </section>
+  </main>
+
+  <div class="foot">
+    <div class="ticker" id="footTicker">LCARS ONLINE &nbsp;&bull;&nbsp; ALL SYSTEMS NOMINAL &nbsp;&bull;&nbsp; LIBRARY COMPUTER ACCESS/RETRIEVAL SYSTEM v2.4 &nbsp;&bull;&nbsp; STANDING BY</div>
+  </div>
+</div>
+
+<div class="alert-overlay" id="alertOverlay" aria-hidden="true"></div>
+<div class="sr-only" role="status" aria-live="polite" id="liveRegion"></div>
+
+<script>
+(function(){
+  "use strict";
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ================= AUDIO ENGINE (synthesized, no samples) ================= */
+  var audioCtx = null, audioOn = true, humNodes = null, klaxon = null;
+  function ctx(){
+    if(!audioCtx){
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if(audioCtx.state === 'suspended') audioCtx.resume();
+    return audioCtx;
+  }
+  function chirp(f1, f2, dur, vol, type){
+    if(!audioOn) return;
+    var c = ctx(), t = c.currentTime;
+    var osc = c.createOscillator(), gain = c.createGain();
+    osc.type = type || 'square';
+    osc.frequency.setValueAtTime(f1, t);
+    osc.frequency.exponentialRampToValueAtTime(Math.max(f2,1), t + dur);
+    gain.gain.setValueAtTime(vol, t);
+    gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+    osc.connect(gain).connect(c.destination);
+    osc.start(t); osc.stop(t + dur + 0.03);
+  }
+  function navBeep(){ chirp(1400, 820, 0.09, 0.14, 'square'); }
+  function tick(){ chirp(2200, 2000, 0.02, 0.06, 'square'); }
+  function confirm2(){ chirp(700, 1300, 0.14, 0.13, 'sine'); setTimeout(function(){ chirp(1300,1900,0.09,0.1,'sine'); }, 90); }
+  function denyTone(){ chirp(320, 180, 0.22, 0.14, 'sawtooth'); }
+  function hail(){ chirp(1046, 1568, 0.12, 0.12, 'sine'); setTimeout(function(){ chirp(1568,1046,0.16,0.1,'sine'); }, 130); }
+
+  function startHum(){
+    if(!audioOn || humNodes) return;
+    var c = ctx();
+    var o1 = c.createOscillator(), o2 = c.createOscillator(), g = c.createGain();
+    o1.type='sine'; o1.frequency.value = 55;
+    o2.type='sine'; o2.frequency.value = 55.6;
+    g.gain.value = 0.0001;
+    o1.connect(g); o2.connect(g); g.connect(c.destination);
+    o1.start(); o2.start();
+    g.gain.exponentialRampToValueAtTime(0.02, c.currentTime + 1.2);
+    humNodes = {o1:o1,o2:o2,g:g};
+  }
+  function stopHum(){
+    if(!humNodes) return;
+    var c = ctx(), g = humNodes.g, o1 = humNodes.o1, o2 = humNodes.o2;
+    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.6);
+    setTimeout(function(){ o1.stop(); o2.stop(); }, 700);
+    humNodes = null;
+  }
+  function startKlaxon(){
+    if(!audioOn || klaxon) return;
+    var c = ctx();
+    var osc = c.createOscillator(), lfo = c.createOscillator(), lfoGain = c.createGain(), g = c.createGain();
+    osc.type = 'sawtooth'; osc.frequency.value = 480;
+    lfo.type = 'sine'; lfo.frequency.value = 3.2;
+    lfoGain.gain.value = 160;
+    lfo.connect(lfoGain).connect(osc.frequency);
+    g.gain.value = 0.0001;
+    osc.connect(g).connect(c.destination);
+    osc.start(); lfo.start();
+    g.gain.exponentialRampToValueAtTime(0.09, c.currentTime + 0.15);
+    klaxon = {osc:osc, lfo:lfo, g:g};
+  }
+  function stopKlaxon(){
+    if(!klaxon) return;
+    var c = ctx(), g = klaxon.g, osc = klaxon.osc, lfo = klaxon.lfo;
+    g.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + 0.25);
+    setTimeout(function(){ osc.stop(); lfo.stop(); }, 320);
+    klaxon = null;
+  }
+
+  var audioToggle = document.getElementById('audioToggle');
+  audioToggle.addEventListener('click', function(){
+    audioOn = !audioOn;
+    audioToggle.firstChild.textContent = 'Audio: ' + (audioOn ? 'On' : 'Off');
+    if(audioOn){ navBeep(); startHum(); } else { stopHum(); stopKlaxon(); }
+  });
+  startHum(); // will actually engage on first gesture due to autoplay policy
+
+  document.addEventListener('click', function once(){
+    ctx();
+    if(audioOn && !humNodes) startHum();
+    document.removeEventListener('click', once);
+  }, {once:true});
+
+  /* ================= NAV / PANEL SWITCHING ================= */
+  var pills = document.querySelectorAll('.pill[data-panel]');
+  var panels = document.querySelectorAll('.panel');
+  var live = document.getElementById('liveRegion');
+  function activatePanel(name){
+    panels.forEach(function(p){ p.classList.toggle('active', p.id === 'panel-' + name); });
+    pills.forEach(function(b){ b.classList.toggle('active', b.dataset.panel === name); });
+    live.textContent = name.toUpperCase() + ' panel active';
+  }
+  pills.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      navBeep();
+      activatePanel(btn.dataset.panel);
+    });
+  });
+
+  /* ================= RED ALERT ================= */
+  var alertOn = false;
+  var alertBtn = document.getElementById('alertToggle');
+  var footTicker = document.getElementById('footTicker');
+  var normalTicker = footTicker.textContent;
+  alertBtn.addEventListener('click', function(){
+    alertOn = !alertOn;
+    document.body.classList.toggle('alert', alertOn);
+    if(alertOn){
+      startKlaxon();
+      footTicker.textContent = 'RED ALERT — ALL HANDS TO BATTLE STATIONS — SHIELDS UP — RED ALERT — ALL HANDS TO BATTLE STATIONS — SHIELDS UP';
+    } else {
+      stopKlaxon();
+      confirm2();
+      footTicker.textContent = normalTicker;
+    }
+  });
+
+  /* ================= STARDATE ================= */
+  (function(){
+    var now = new Date();
+    var start = new Date(now.getFullYear(), 0, 0);
+    var diff = now - start;
+    var dayOfYear = Math.floor(diff / 86400000);
+    var isLeap = (now.getFullYear()%4===0 && now.getFullYear()%100!==0) || now.getFullYear()%400===0;
+    var fraction = dayOfYear / (isLeap ? 366 : 365);
+    var trekEraYear = 2401; // in-universe reference year for this vessel
+    var stardate = (trekEraYear - 2323) * 1000 + fraction * 1000;
+    document.getElementById('stardate').textContent = 'STARDATE ' + stardate.toFixed(1);
+  })();
+
+  /* ================= BOOT LOG (typewriter) ================= */
+  var bootLines = [
+    'LCARS v2.4 — LIBRARY COMPUTER ACCESS/RETRIEVAL SYSTEM',
+    'INITIALIZING MAIN VIEWER … OK',
+    'FORWARD SENSOR ARRAY … OK',
+    'ALL SYSTEMS NOMINAL. STANDING BY.'
+  ];
+  var bootEl = document.getElementById('bootLog');
+  function typeBootLog(){
+    if(reduceMotion){
+      bootEl.textContent = bootLines.join('\n');
+      return;
+    }
+    var li = 0, ci = 0, buf = '';
+    function step(){
+      if(li >= bootLines.length){
+        bootEl.innerHTML = buf + '<span class="cursor">&nbsp;</span>';
+        return;
+      }
+      var line = bootLines[li];
+      if(ci <= line.length){
+        bootEl.innerHTML = buf + line.slice(0, ci) + '<span class="cursor">&nbsp;</span>';
+        if(ci % 3 === 0) tick();
+        ci++;
+        setTimeout(step, 14);
+      } else {
+        buf += line + '\n';
+        li++; ci = 0;
+        setTimeout(step, 160);
+      }
+    }
+    step();
+  }
+  typeBootLog();
+
+  /* ================= STARFIELD CANVAS ================= */
+  (function(){
+    var canvas = document.getElementById('starfield');
+    var g = canvas.getContext('2d');
+    var stars = [];
+    function resize(){
+      var r = canvas.getBoundingClientRect();
+      canvas.width = r.width * devicePixelRatio;
+      canvas.height = r.height * devicePixelRatio;
+    }
+    function seed(){
+      stars = [];
+      var n = 260;
+      for(var i=0;i<n;i++){
+        stars.push({
+          x:(Math.random()-0.5)*canvas.width,
+          y:(Math.random()-0.5)*canvas.height,
+          z:Math.random()*canvas.width
+        });
+      }
+    }
+    resize(); seed();
+    window.addEventListener('resize', function(){ resize(); seed(); });
+    function frame(){
+      var w = canvas.width, h = canvas.height, cx = w/2, cy = h/2;
+      g.fillStyle = 'rgba(0,0,4,0.4)';
+      g.fillRect(0,0,w,h);
+      for(var i=0;i<stars.length;i++){
+        var s = stars[i];
+        s.z -= reduceMotion ? 0 : 6;
+        if(s.z <= 1) s.z = w;
+        var k = w / s.z;
+        var sx = s.x * k + cx, sy = s.y * k + cy;
+        if(sx < 0 || sx > w || sy < 0 || sy > h) continue;
+        var size = (1 - s.z/w) * 2.6;
+        var alpha = Math.min(1, (1 - s.z/w) * 1.6);
+        g.fillStyle = 'rgba(200,210,255,' + alpha + ')';
+        g.fillRect(sx, sy, size, size);
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+  })();
+
+  /* ================= SHIP STATUS GAUGES ================= */
+  var subsystems = [
+    ['Warp Core', 'orange', 96],
+    ['Shields', 'peri', 100],
+    ['Life Support', 'tan', 99],
+    ['Structural Integrity', 'lilac', 94],
+    ['Impulse Engines', 'orange', 88],
+    ['Deflector Array', 'peri', 91],
+    ['Transporter', 'tan', 100],
+    ['Inertial Dampers', 'lilac', 97]
+  ];
+  var colorVar = { orange:'var(--orange)', peri:'var(--peri)', tan:'var(--tan)', lilac:'var(--lilac)' };
+  var statusGrid = document.getElementById('statusGrid');
+  var gaugeEls = subsystems.map(function(s){
+    var row = document.createElement('div');
+    row.className = 'gauge';
+    row.innerHTML =
+      '<div class="name">'+s[0]+'</div>' +
+      '<div class="track"><div class="fill" style="width:'+s[2]+'%; background:'+colorVar[s[1]]+'"></div></div>' +
+      '<div class="pct">'+s[2]+'%</div>';
+    statusGrid.appendChild(row);
+    return { row:row, base:s[2], fill: row.querySelector('.fill'), pct: row.querySelector('.pct'), color: colorVar[s[1]] };
+  });
+  setInterval(function(){
+    gaugeEls.forEach(function(gz){
+      var jitter = alertOn ? (Math.random()*30 - 22) : (Math.random()*6 - 3);
+      var val = Math.max(4, Math.min(100, gz.base + jitter));
+      gz.fill.style.width = val + '%';
+      gz.pct.textContent = Math.round(val) + '%';
+      var critical = val < 40;
+      gz.row.classList.toggle('critical', critical);
+      gz.fill.style.background = critical ? 'var(--red)' : gz.color;
+    });
+  }, 1400);
+
+  /* ================= COMMUNICATIONS LOG ================= */
+  var commLog = document.getElementById('commLog');
+  var senders = ['ENGINEERING', 'BRIDGE', 'SICKBAY', 'STARFLEET COMMAND', 'SHUTTLEBAY 2', 'ASTROMETRICS'];
+  var messages = [
+    'Requesting status update on deflector realignment.',
+    'Course correction logged, three degrees to port.',
+    'Medical team standing by, no incidents to report.',
+    'Acknowledged. Maintain present heading.',
+    'Diagnostic complete, all boards green.',
+    'Hailing frequencies remain open, no response yet.',
+    'Cargo transfer complete, manifest logged.',
+    'Long-range scan cycle finished, data archived to database.'
+  ];
+  function addComm(incoming){
+    var e = document.createElement('div');
+    e.className = 'comm-entry' + (incoming ? ' incoming' : '');
+    var d = new Date();
+    var stamp = ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2)+':'+('0'+d.getSeconds()).slice(-2);
+    var from = senders[Math.floor(Math.random()*senders.length)];
+    var msg = messages[Math.floor(Math.random()*messages.length)];
+    e.innerHTML = '<div class="meta">'+stamp+' &middot; '+from+(incoming?' — INCOMING':'')+'</div><div class="msg">'+msg+'</div>';
+    commLog.insertBefore(e, commLog.firstChild);
+    while(commLog.children.length > 40) commLog.removeChild(commLog.lastChild);
+  }
+  for(var i=0;i<5;i++) addComm(false);
+  setInterval(function(){
+    var incoming = Math.random() < 0.35;
+    addComm(incoming);
+    if(incoming) hail(); else tick();
+  }, 5200);
+
+  /* ================= SENSOR RADAR ================= */
+  (function(){
+    var canvas = document.getElementById('radar');
+    var g = canvas.getContext('2d');
+    var angle = 0;
+    var blips = [];
+    for(var i=0;i<5;i++) blips.push({ a: Math.random()*Math.PI*2, r: 0.2+Math.random()*0.75 });
+    function resize(){
+      var r = canvas.getBoundingClientRect();
+      canvas.width = r.width * devicePixelRatio;
+      canvas.height = r.height * devicePixelRatio;
+    }
+    resize();
+    window.addEventListener('resize', resize);
+    function frame(){
+      var w = canvas.width, h = canvas.height, cx = w/2, cy = h/2, rad = Math.min(w,h)/2 - 8;
+      g.fillStyle = 'rgba(0,0,4,0.35)';
+      g.fillRect(0,0,w,h);
+      g.strokeStyle = 'rgba(153,153,255,0.35)';
+      g.lineWidth = 1;
+      [0.33,0.66,1].forEach(function(f){
+        g.beginPath(); g.arc(cx,cy,rad*f,0,Math.PI*2); g.stroke();
+      });
+      g.beginPath(); g.moveTo(cx-rad,cy); g.lineTo(cx+rad,cy);
+      g.moveTo(cx,cy-rad); g.lineTo(cx,cy+rad); g.stroke();
+
+      blips.forEach(function(b){
+        var bx = cx + Math.cos(b.a)*rad*b.r, by = cy + Math.sin(b.a)*rad*b.r;
+        g.fillStyle = '#FF9C00';
+        g.beginPath(); g.arc(bx,by,3.5,0,Math.PI*2); g.fill();
+      });
+
+      var grad = g.createLinearGradient(cx,cy,cx+Math.cos(angle)*rad, cy+Math.sin(angle)*rad);
+      grad.addColorStop(0, 'rgba(153,153,255,0.65)');
+      grad.addColorStop(1, 'rgba(153,153,255,0)');
+      g.strokeStyle = grad;
+      g.lineWidth = 3;
+      g.beginPath(); g.moveTo(cx,cy); g.lineTo(cx+Math.cos(angle)*rad, cy+Math.sin(angle)*rad); g.stroke();
+
+      if(!reduceMotion) angle += 0.02;
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    setInterval(function(){
+      document.getElementById('sBearing').textContent = String(Math.floor(Math.random()*360)).padStart(3,'0');
+      document.getElementById('sRange').textContent = (Math.random()*9+0.5).toFixed(1) + ' LY';
+      document.getElementById('sContacts').textContent = blips.length;
+    }, 2600);
+  })();
+
+  /* ================= DATABASE STREAM ================= */
+  var dbStream = document.getElementById('dbStream');
+  var dbTags = ['LCARS', 'STF-REG', 'ARCHIVE', 'MEDLOG', 'ENG-SPEC', 'STARCHART'];
+  var dbDescs = [
+    'Starfleet regulation 191, subsection C — emergency command authority.',
+    'Warp field geometry recalibration, revision 4.',
+    'Crew evaluation record sealed pending review.',
+    'Deflector dish harmonic frequency table.',
+    'First contact protocol, appendix II.',
+    'Stellar cartography update, sector 21174.',
+    'Transporter pattern buffer diagnostics.',
+    'Away team equipment manifest, standard loadout.'
+  ];
+  function pad(n, len){ return String(n).padStart(len, '0'); }
+  function addDbRow(){
+    var row = document.createElement('div');
+    row.className = 'row';
+    var tag = dbTags[Math.floor(Math.random()*dbTags.length)];
+    var code = pad(Math.floor(Math.random()*99999),5) + '-' + String.fromCharCode(65+Math.floor(Math.random()*26));
+    var desc = dbDescs[Math.floor(Math.random()*dbDescs.length)];
+    row.innerHTML = '<span class="tag">'+tag+'</span><span class="code">'+code+'</span><span class="desc">'+desc+'</span>';
+    dbStream.appendChild(row);
+    tick();
+    while(dbStream.children.length > 60) dbStream.removeChild(dbStream.firstChild);
+    dbStream.scrollTop = dbStream.scrollHeight;
+  }
+  for(var d=0; d<14; d++) addDbRow();
+  setInterval(addDbRow, 900);
+
+})();
+</script>
